@@ -1,10 +1,11 @@
 ---
-- name: Update and reboot
+- name: Linux Reboot
   hosts: rhel_hosts
   gather_facts: no
+  remote_user: devops
+  become: true
+ 
   tasks:
-    - name: Reboot server
+    - name: Reboot the machine (Wait for 90sec)
       reboot:
-	pre_reboot_delay: 90
-	msg: "Attention,server will be rebooted in 90seconds!!"
----
+        reboot_timeout: 90
