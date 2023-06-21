@@ -4,11 +4,11 @@
   gather_facts: no
   tasks:
     - name: upgrade all packages
-	  yum:
-	    name:'*'
-		state: latest
+      yum:
+	name: '*'
+	state: latest
     - name: Reboot server
-	  reboot:
-	   pre_reboot_delay: 90
-	   msg: "Attention,server will be rebooted in 90seconds!!"
+      reboot:
+	pre_reboot_delay: 90
+	msg: "Attention,server will be rebooted in 90seconds!!"
 ---
