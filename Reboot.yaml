@@ -4,7 +4,7 @@
   gather_facts: no
   remote_user: devops
   become: true
- tasks:
+  tasks:
    - name: Reboot the machine (Wait for 90sec)
      reboot:
        reboot_timeout: 90
