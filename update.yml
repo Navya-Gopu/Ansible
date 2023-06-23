@@ -6,8 +6,5 @@
   become: true
  tasks:
   - name: Upgrade all packages on servers
-      apt: upgrade=dist force_apt_get=yes
- 
-   - name: Reboot the machine (Wait for 90sec)
-     reboot:
-       reboot_timeout: 90
+    apt: upgrade=dist force_apt_get=yes
+
