@@ -1,11 +1,13 @@
 ---
-- name: Linux Reboot
+- name: Linux update
   hosts: rhel_hosts
   gather_facts: no
   remote_user: devops
   become: true
+ tasks:
+  - name: Upgrade all packages on servers
+      apt: upgrade=dist force_apt_get=yes
  
-  tasks:
-    - name: Reboot the machine (Wait for 90sec)
-      reboot:
-        reboot_timeout: 90
+   - name: Reboot the machine (Wait for 90sec)
+     reboot:
+       reboot_timeout: 90
