@@ -4,7 +4,7 @@
   gather_facts: no
   remote_user: devops
   become: true
- tasks:
+  tasks:
   - name: Upgrade all packages on servers
     apt: upgrade=dist force_apt_get=yes
 
