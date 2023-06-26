@@ -1,2 +1,2 @@
 [rhel_hosts]
-172-31-8-18
+172-31-8-18 ansible_user=root
