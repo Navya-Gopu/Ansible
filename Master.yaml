@@ -1,9 +1,9 @@
 ---
-- name: Accept and print argument
+- name: Receive arguments from job template
   hosts: rhel_hosts
   gather_facts: false
 
   tasks:
-    - name: Print argument
+    - name: Print arguments
       debug:
-        msg: "The argument is : {{ param1 }}"
+        msg: "param1: {{ param1 }}, param2: {{ param2 }}"
