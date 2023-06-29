@@ -1,0 +1,9 @@
+---
+- name: Accept and print argument
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Print argument
+      debug:
+        msg: "The argument is: {{ my_argument }}"
