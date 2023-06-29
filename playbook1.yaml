@@ -5,6 +5,5 @@
 
   tasks:
     - name: Print arguments
-      register: playbookvar
       debug:
         msg: "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
