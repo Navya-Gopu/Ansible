@@ -3,8 +3,8 @@
   hosts: rhel_hosts
   gather_facts: false
   vars:
-    variable: ""
+    variable1: "{{ variable1 }}"
   tasks:
     - name: Print arguments
       debug:
-        msg: "variable: {{ variable }}"
+        msg: "variable1: {{ variable1 }}"
