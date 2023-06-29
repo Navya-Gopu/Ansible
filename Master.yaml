@@ -1,6 +1,6 @@
 ---
 - name: Accept and print JSON argument
-  hosts: rhel
+  hosts: rhel_hosts
   gather_facts: false
 
   vars_prompt:
