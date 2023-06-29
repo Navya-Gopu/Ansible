@@ -2,9 +2,6 @@
 - name: Accept and print argument
   hosts: rhel_hosts
   gather_facts: false
-  
-  vars:
-    my_argument: ""
 
   tasks:
     - name: Print argument
