@@ -1,18 +1,12 @@
 ---
-- name: Accept and print JSON argument
+- name: Accept and print argument
   hosts: rhel_hosts
   gather_facts: false
-
-  vars_prompt:
-    - name: json_argument
-      prompt: "Enter JSON argument"
-      private: no
+  
+  vars:
+    my_argument: ""
 
   tasks:
-    - name: Set JSON argument
-      set_fact:
-        my_json: "{{ json_argument | from_json }}"
-
-    - name: Print JSON argument
+    - name: Print argument
       debug:
-        var: my_json
+        msg: "The argument"
