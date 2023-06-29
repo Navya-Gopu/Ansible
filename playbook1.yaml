@@ -5,7 +5,6 @@
 
   tasks:
     - name: Print arguments
-      shell: echo "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
       register: playbookvar
       debug:
-        msg: "{{playbookvar}}"
+        msg: "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
