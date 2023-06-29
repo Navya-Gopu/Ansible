@@ -6,4 +6,4 @@
   tasks:
     - name: Print argument
       debug:
-        msg: "The argument"
+        msg: "The argument is : {{ param1 }}"
