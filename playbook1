@@ -1,0 +1,11 @@
+---
+- name: Receive arguments from job template
+  hosts: rhel_hosts
+  gather_facts: false
+
+  tasks:
+    - name: Print arguments
+      shell: echo "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
+      register: playbookvar
+      debug:
+        msg: "{{playbookvar}}"
