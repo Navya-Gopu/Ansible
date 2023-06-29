@@ -3,6 +3,9 @@
   hosts: rhel_hosts
   gather_facts: false
 
+  vars:
+    my_argument: ""
+    
   tasks:
     - name: Print argument
       debug:
