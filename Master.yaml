@@ -2,6 +2,10 @@
 - name: Receive arguments from job template
   hosts: rhel_hosts
   gather_facts: false
+  
+  vars:
+    param1: "{{ param1 }}"
+    param2: "{{ param2 }}"
 
   tasks:
     - name: Print arguments
