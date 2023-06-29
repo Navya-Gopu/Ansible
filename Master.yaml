@@ -3,7 +3,7 @@
   hosts: rhel_hosts
   gather_facts: false
   vars:
-    variable: "{{ variable }}"
+    variable: ""
   tasks:
     - name: Print arguments
       debug:
