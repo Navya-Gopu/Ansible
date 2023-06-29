@@ -2,7 +2,8 @@
 - name: Receive arguments from job template
   hosts: rhel_hosts
   gather_facts: false
-
+  vars:
+    variable: "{{ variable }}"
   tasks:
     - name: Print arguments
       debug:
