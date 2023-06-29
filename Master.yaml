@@ -1,6 +1,6 @@
 ---
 - name: Accept and print argument
-  hosts: localhost
+  hosts: rhel_hosts
   gather_facts: false
 
   tasks:
