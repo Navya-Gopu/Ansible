@@ -6,4 +6,4 @@
   tasks:
     - name: Print arguments
       debug:
-        msg: "Platform: {{ Platform }}, Customer: {{ Customer }}"
+        msg: "vars: {{ extra_vars }}, Platform: {{ Platform }}, Customer: {{ Customer }}"
