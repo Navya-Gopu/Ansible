@@ -1,0 +1,9 @@
+---
+- name: Receive arguments from job template 2
+  hosts: rhel_hosts
+  gather_facts: false
+
+  tasks:
+    - name: Print arguments
+      debug:
+        msg: "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
