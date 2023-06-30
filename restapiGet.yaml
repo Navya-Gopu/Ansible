@@ -7,9 +7,9 @@
     - debug:
         msg: “Let’s call an API”
 
-    - name: Everyone loves a good Chuck Norris joke
+    - name: To get inventories list from ansible tower
       uri:
-        url: https://api.chucknorris.io/jokes/random
+        url: https://43.204.219.39/api/v2/inventories/
         method: GET
       register: results
 
