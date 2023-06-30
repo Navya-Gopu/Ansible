@@ -1,8 +1,8 @@
 ---
 - name: Using a REST API
-  become: false
   hosts: rhel_hosts
   gather_facts: false
+
   tasks:
     - debug:
         msg: “Let’s call an API”
