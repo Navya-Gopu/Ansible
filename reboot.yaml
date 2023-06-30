@@ -1,8 +1,0 @@
- - name: Getting the ansible tower job details
-      uri:
-        url: https://43.204.219.39/api/v2/inventories/
-        method: GET
-      register: results
-
-    - debug:
-        var: results

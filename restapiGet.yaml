@@ -1,0 +1,8 @@
+   - name: Getting the definition of awesome
+      uri:
+        url: https://api.chucknorris.io/jokes/random
+        method: GET
+      register: results
+
+    - debug:
+        var: results
