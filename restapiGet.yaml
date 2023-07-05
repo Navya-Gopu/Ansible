@@ -1,6 +1,6 @@
 ---
 - name: Using a REST API
-  hosts: rhel_hosts
+  hosts: localhost
   gather_facts: false
 
   tasks:
