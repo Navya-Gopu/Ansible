@@ -6,4 +6,4 @@
   tasks:
     - name: Print arguments
       debug:
-        msg: "param: {{ parameters }}, Platform: {{ parameters.Platform }}"
+        msg: "param: {{ parameters }}, Customer: {{ parameters.Customer }}"
