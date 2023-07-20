@@ -1,0 +1,29 @@
+---
+- name: Fetch Incident Details from ServiceNow
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    servicenow_instance: "https://dev124557.service-now.com"
+    servicenow_user: "navpreet.kaur"
+    servicenow_password: "Magic@world1997"
+
+  tasks:
+    - name: Base64 encode credentials
+      set_fact:
+        encoded_credentials: "{{ (servicenow_user ~ ':' ~ servicenow_password) | b64encode }}"
+      no_log: true
+
+    - name: Fetch Incidents
+      uri:
+        url: "{{ servicenow_instance }}/api/now/table/incident"
+        method: GET
+        headers:
+          Accept: "application/json"
+          Authorization: "Basic {{ encoded_credentials | decode('utf-8') }}"
+        return_content: yes
+      register: incident_data
+
+    - name: Print Incident Details
+      debug:
+        var: incident_data.json
