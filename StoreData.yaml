@@ -1,0 +1,9 @@
+---
+- name: Receive arguments from FetchIncident
+  hosts: rhel_hosts
+  gather_facts: false
+
+  tasks:
+    - name: Print arguments
+      debug:
+        msg: "Data: {{ global_incident_data }}"
