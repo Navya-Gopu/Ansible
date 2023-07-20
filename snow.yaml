@@ -1,6 +1,6 @@
 ---
 - name: Fetch Incident Details from ServiceNow
-  hosts: localhost
+  hosts: rhel_hosts
   gather_facts: no
 
   vars:
