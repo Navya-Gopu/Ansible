@@ -7,7 +7,7 @@
     # Import the 'snow.yml' playbook as a role
     - name: Import 'snow.yaml' as a role
       include_role:
-        name: ./snow.yaml
+        name: ./snow.yml
 
     # Use the global variable from the imported playbook
     - name: Print Global Incident Data in Second Playbook
