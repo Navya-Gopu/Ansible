@@ -20,7 +20,7 @@
         method: GET
         headers:
           Accept: "application/json"
-          Authorization: "Basic {{ encoded_credentials | decode('utf-8') }}"
+          Authorization: "Basic {{ encoded_credentials | b64decode }}"
         return_content: yes
       register: incident_data
 
