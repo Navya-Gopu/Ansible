@@ -1,9 +1,15 @@
 ---
-- name: Receive arguments from FetchIncident
-  hosts: rhel_hosts
-  gather_facts: false
+- name: Process Incident Data
+  hosts: localhost
+  gather_facts: no
 
   tasks:
-    - name: Print arguments
+    # Import the 'snow.yml' playbook as a role
+    - name: Import 'snow.yaml' as a role
+      include_role:
+        name: ./snow.yaml
+
+    # Use the global variable from the imported playbook
+    - name: Print Global Incident Data in Second Playbook
       debug:
-        msg: "Data: {{ global_incident_data }}"
+        var: global_incident_data
