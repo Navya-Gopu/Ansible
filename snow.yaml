@@ -1,8 +1,8 @@
 ---
-- name: Fetch Incident Details from ServiceNow
+- name: Fetch Incident Data from ServiceNow
   hosts: localhost
   gather_facts: no
- 
+
   vars:
     servicenow_instance: "https://dev124557.service-now.com"
     servicenow_user: "admin"
@@ -20,10 +20,10 @@
         method: GET
         headers:
           Accept: "application/json"
-          Authorization: "Basic {{ encoded_credentials | b64decode }}"
+          Authorization: "Basic {{ encoded_credentials | string }}"
         return_content: yes
       register: incident_data
 
-    - name: Print Incident Details
+    - name: Print Incident Data
       debug:
         var: incident_data.json
