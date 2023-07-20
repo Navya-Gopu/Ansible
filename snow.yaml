@@ -6,7 +6,7 @@
   vars:
     servicenow_instance: "https://dev124557.service-now.com"
     servicenow_user: "navpreet.kaur"
-    servicenow_password: "!uNvV.>Eo5Bo=[x3f{z7zB6.z_Z2Xk!@+["
+    servicenow_password: "Magic@world1997"
 
   tasks:
     - name: Base64 encode credentials
