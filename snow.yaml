@@ -2,7 +2,7 @@
 - name: Fetch Incident Details from ServiceNow
   hosts: localhost
   gather_facts: no
-
+ 
   vars:
     servicenow_instance: "https://dev124557.service-now.com"
     servicenow_user: "admin"
