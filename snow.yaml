@@ -23,7 +23,9 @@
           Authorization: "Basic {{ encoded_credentials | string }}"
         return_content: yes
       register: incident_data
+      set_fact:
+        global_incident_data: "{{ incident_data.json }}"
 
     - name: Print Incident Data
       debug:
-        var: incident_data.json
+        var: global_incident_data
