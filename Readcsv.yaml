@@ -8,7 +8,7 @@
   tasks:
     - name: Read CSV file
       set_fact:
-        csv_data: "{{ lookup('csvfile', 'path/to/samplecsv.csv', delimiter=',') }}"
+        csv_data: "{{ lookup('csvfile', 'samplecsv.csv', delimiter=',') }}"
 
  
 
