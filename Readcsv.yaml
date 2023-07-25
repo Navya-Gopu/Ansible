@@ -1,14 +1,17 @@
 ---
-- name: Read sample csv file
-  gather_facts: no
+- name: Read content from CSV file
   hosts: localhost
+  gather_facts: no
+
+ 
 
   tasks:
-    - name: Reading csv information
-      read_csv:
-        path: samplecsv.csv
-      register: usecase
-      
-    - name: print name
+    - name: Read CSV file
+      set_fact:
+        csv_data: "{{ lookup('csvfile', 'path/to/samplecsv.csv', delimiter=',') }}"
+
+ 
+
+    - name: Print CSV data
       debug:
-        msg: "{{ usecase.list.0.usecasename }} and value is {{ usecase.list.0.value }}"
+        var: csv_data
