@@ -4,12 +4,12 @@
   hosts: localhost
 
   tasks:
-  - name: "Reading csv information"
-    read_csv:
-      path: SampleCSV.csv
-      register: usecaselist
+   - name: "Reading csv information"
+     read_csv:
+       path: SampleCSV.csv
+     register: usecaselist
 
-  - debug: 
+   - debug: 
       msg: "{{ usecase.usecasename }} and value is {{ usecase.value }}"
       loop: "{{ usecaselist.list }}"
       loop_control:
