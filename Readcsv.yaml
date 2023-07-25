@@ -6,7 +6,7 @@
   tasks:
    - name: Read users from CSV file and return a list
      read_csv:
-       path: samplecsv.csv
+       path: "{{ samplecsv.csv }}"
      register: users
      delegate_to: localhost
       
