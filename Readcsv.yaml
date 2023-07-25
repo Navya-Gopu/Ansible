@@ -11,7 +11,7 @@
       
     - name: print name
       debug:
-        msg: "{{ usecase.username }} and value is {{ usecase.password }}"
+        msg: "{{ usecase.usecasename }} and value is {{ usecase.value }}"
       loop: "{{ usecaselist.list }}"
       loop_control:
         loop_var: usecase
