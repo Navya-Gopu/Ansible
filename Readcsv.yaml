@@ -11,4 +11,4 @@
       
     - name: print name
       debug:
-        msg: "{{ usecase.list.1.usecasename }} and value is {{ usecase.list.1.value }}"
+        msg: "{{ usecase.list.0.usecasename }} and value is {{ usecase.list.0.value }}"
