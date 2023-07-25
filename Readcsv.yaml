@@ -1,17 +1,16 @@
 ---
 - name: Read sample csv file
-  gather_facts: True
+  gather_facts: no
   hosts: localhost
 
   tasks:
-    - name: Reading csv information
-      read_csv:
-        path: SampleCSV.csv
-      register: usecaselist
+   - name: Read users from CSV file and return a list
+     read_csv:
+       path: users.csv
+     register: users
+     delegate_to: localhost
       
-    - name: print name
+   - name: print name
       debug:
-        msg: "{{ usecase.usecasename }} and value is {{ usecase.value }}"
-      loop: "{{ usecaselist.list }}"
-      loop_control:
-        loop_var: usecase
+        msg: "{{ users.list.1.usecasename }} and value is {{ users.list.1.value }}"
+      
