@@ -4,7 +4,7 @@
   hosts: localhost
 
   tasks:
-   - name: "Reading csv information"
+   - name: Reading csv information
      read_csv:
        path: SampleCSV.csv
      register: usecaselist
