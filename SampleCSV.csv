@@ -1,0 +1,9 @@
+Use case,ServiceNow field,Value 
+eMRS,incident.short_description,BPPM
+eMRS,incident.sys_id,
+eMRS,incident.number,
+,,
+ControlM_Agent,incident.description,Control-M Agent
+ControlM_Agent,incident.assignment_group.name,
+ControlM_Agent,incident.sys_id,
+ControlM_Agent,cmdb_ci.fqdn,
