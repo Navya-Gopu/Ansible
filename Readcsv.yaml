@@ -11,6 +11,5 @@
      delegate_to: localhost
       
    - name: print name
-      debug:
+     debug:
         msg: "{{ users.list.1.usecasename }} and value is {{ users.list.1.value }}"
-      
