@@ -10,9 +10,8 @@
         state: present
 
     - name:  import necessary python modules
-      ansible.bultin.script:
-         script: |
-            import pandas as pd
+      ansible.bultin.shell:
+         cmd: "python -c 'import pandas as pd,requests'"
      
     - name: Reading csv information
       csv_file:
