@@ -6,7 +6,7 @@
   tasks:
     - name: Reading csv information
       csv_file:
-        path: samplecsv.csv
+        path: /Ansible/blob/main/samplecsv.csv
       register: usecase
       
     - name: print name
