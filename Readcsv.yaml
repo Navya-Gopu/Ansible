@@ -1,17 +1,17 @@
 ---
-- name: Read content from CSV file
+- name: Configuring Tenant with CSV file
   hosts: localhost
-  gather_facts: no
-
- 
+  gather_facts: false
 
   tasks:
-    - name: Read CSV file
-      set_fact:
-        csv_data: "{{ lookup('csvfile', 'samplecsv.csv', delimiter=',') }}"
+  # Read a CSV file and access Tenant csv
+  - name: Read data from CSV file to be used to configure ACI
+    read_csv:
+      path: samplecsv.csv
+      # key: tenant
+    register: mytenant
+    delegate_to: localhost
 
- 
-
-    - name: Print CSV data
-      debug:
-        var: csv_data
+  # Used for debugging purposes to make sure list is correct.
+  - debug:
+      msg: Tenant {{ mytenant.list.0.usecasename }} and VRF {{ mytenant.list.0.value}}
