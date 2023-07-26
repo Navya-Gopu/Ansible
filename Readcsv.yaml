@@ -9,8 +9,8 @@
         name: pandas
         state: present
 
-     - name: import necessary python modules
-       ansible.bultin.script:
+    - name:  import necessary python modules
+      ansible.bultin.script:
          script: |
             import pandas as pd
      
