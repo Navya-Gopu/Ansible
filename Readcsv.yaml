@@ -1,9 +1,17 @@
 ---
-- name: Read users from CSV file and return a list
-  community.general.read_csv:
-    path: samplecsv.csv
-  register: users
-  delegate_to: localhost
+- name: Read content from CSV file
+  hosts: localhost
+  gather_facts: no
 
-- ansible.builtin.debug:
-    msg: 'Usecase name {{ users.list.1.usecasename }} has value {{ users.list.1.value }}'
+ 
+
+  tasks:
+    - name: Read CSV file
+      set_fact:
+        csv_data: "{{ lookup('csvfile', 'samplecsv.csv', delimiter=',') }}"
+
+ 
+
+    - name: Print CSV data
+      debug:
+        var: csv_data
