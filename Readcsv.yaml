@@ -5,7 +5,7 @@
 
   tasks:
     - name: Reading csv information
-      read_csv:
+      csv_file:
         path: samplecsv.csv
       register: usecase
       
