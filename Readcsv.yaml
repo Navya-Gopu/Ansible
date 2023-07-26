@@ -13,12 +13,12 @@
       ansible.builtin.shell:
          cmd: "python -c 'import pandas as pd,requests'"
 
-    - name:  download giturl
-      get_url:
-         url: "https://github.com/Navya-Gopu/Ansible/blob/main/samplecsv.csv"
-         dest: "C:/Users/navygopu/Downloads/test/samplecsv.csv"
+   # - name:  download giturl
+     # get_url:
+        # url: "https://github.com/Navya-Gopu/Ansible/blob/main/samplecsv.csv"
+        # dest: "C:/Users/navygopu/Downloads/test/samplecsv.csv"
     - name: Reading csv information
-      shell: cat "C:/Users/navygopu/Downloads/test/samplecsv.csv"
+      shell: cat "https://github.com/Navya-Gopu/Ansible/blob/main/samplecsv.csv"
       register: usecase
      
     
