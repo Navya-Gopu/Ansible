@@ -4,9 +4,19 @@
   hosts: localhost
 
   tasks:
+    - name: install libraries
+      pip: 
+        name: pandas
+        state: present
+
+     - name: import necessary python modules
+       ansible.bultin.script:
+         script: |
+            import pandas as pd
+     
     - name: Reading csv information
       csv_file:
-        path: /Ansible/blob/main/samplecsv.csv
+        path: samplecsv.csv
       register: usecase
       
     - name: print name
