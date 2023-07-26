@@ -18,8 +18,7 @@
          url: "https://github.com/Navya-Gopu/Ansible/blob/main/samplecsv.csv"
          dest: "C:/Users/navygopu/Downloads/test/samplecsv.csv"
     - name: Reading csv information
-      csvfile:
-        path: "C:/Users/navygopu/Downloads/test/samplecsv.csv"
+      shell: cat "C:/Users/navygopu/Downloads/test/samplecsv.csv"
       register: usecase
      
     
