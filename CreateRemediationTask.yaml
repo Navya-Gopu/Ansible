@@ -11,10 +11,10 @@
          target_hosts:
            - host1.example.com
            - host2.example.com
-          remediation_command: " remediation command executed "
+       remediation_command: " remediation command executed "
 
-      - name: create remediation task via post api
-        uri:
+   - name: create remediation task via post api
+     uri:
           url: "https://"
           method: POST
           headers: 
@@ -23,15 +23,15 @@
           body_format: json
           body: "{{ task_data| to_json }}"
           return_content: yes
-        register: api_response
+     register: api_response
 
-      - name: Check API response status
-        debug:
+   - name: Check API response status
+     debug:
           msg: "Remediation task created successfully"
-        when: api_response.status ==201
+     when: api_response.status ==201
 
-      - name: Check API response status
-        fail:
+   - name: Check API response status
+     fail:
           msg: "RFailed to create remediation task. Error: {{ api_response.json }}"
-        when: api_response.status !=201
+     when: api_response.status !=201
         
