@@ -1,0 +1,35 @@
+---
+- name: Get Bearer Token
+  hosts: localhost
+  gather_facts : no
+
+  tasks:
+  
+   - name: Load certificate and headers
+     set_fact:
+      certificate_path: "cert.crt"
+      headers:
+        Content-Type: "application/json"
+        Authorization: "Basic --"
+        
+   - name: Generate the payload
+     set_fact:
+        payload: '{"grant_type":"client_credentials", "scope": "SCO_OBC7_DOP_M2M_V", "client_id": "CLI_OBC7_DOP_M2M_V"}'
+
+   - name: Get Bearer Token
+     uri:
+         url: "https://ssobroker-val.airbus.com:10443/as/token.oauth2"
+         method: POST
+         client_cert: "{{certificate_path}}"
+         body_format: json
+         headers: "{{headers}}"
+         body: "{{payload}}"
+         status_code: 200
+         return_content: yes
+         register: token_response
+
+   - name: Print Bearer Token
+     debug:
+           var: token_response.json.access_token
+         
+     
