@@ -9,7 +9,7 @@
         path: samplecsv.csv
       register: usecase
       
-    - name: print name
+    - name: Print usecase name and value 
       debug:
         msg: "{{ usecase.list.1.usecasename }} and value is {{ usecase.list.1.value }}"
 
