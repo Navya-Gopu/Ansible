@@ -41,8 +41,8 @@
       Content-Type: "application/json"
      body_format: json
     # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
-    body: '{"short_description": "Incident Title test", "urgency":"3","impact":"3"}'
-    status code: 201
+     body: '{"short_description": "Incident Title test", "urgency":"3","impact":"3"}'
+     status code: 201
     register: response
 
   - name: Check API response
