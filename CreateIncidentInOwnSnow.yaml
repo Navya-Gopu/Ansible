@@ -1,0 +1,30 @@
+  
+- name: Create ServiceNow Incident
+  hosts: localhost
+  gather_facts: no
+  vars:
+   servicenow_api_url: "https://dev121431.service-now.com/api/now/table/incident"
+   servicenow_username: "admin"
+   servicenow_password: "E4%p+lgvVWY0"
+  tasks:
+  - name: Create Incident in ServiceNow
+    uri:
+     url: "{{ servicenow_api_url }}"
+     method: POST
+     headers:
+      
+      Content-Type: "application/json"
+     body_format: json
+    # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
+     body: '{"short_description": "Incident Title test fom playbook", "urgency":"3","impact":"3"}'
+     status code: 201
+     validate_certs: no
+     force_basic_auth: yes
+     user: "{{ servicenow_username }}"
+     password: "{{ servicenow_password }}"
+    register: response
+
+  - name: Check API response
+    debug:
+      var: response
+    
