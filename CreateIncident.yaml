@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: no
 
-  var:
+  vars:
    oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
    clinet_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
    client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
