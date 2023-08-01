@@ -1,4 +1,31 @@
 --- 
+- name: Obtain ServiceNow Token
+  hosts: localhost
+  gather_facts: no
+
+  var:
+   oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+   clinet_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
+   client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
+
+  tasks:
+  - name: Get token from servicenow
+    uri:
+     url: "{{ oauth_endpoint }}"
+     method: POST
+     headers:
+      Content-Type: "application/x-www-form-urlEncoded"
+     body: "grant_type= client_credentials&client_id={{ client_id }}&client_secret={{ client_secret }}"
+     status_code: 200
+    register: response
+
+  - name: Extract token from api response
+    set_fact:
+     servicenow_token: "{{ response.json.access.token }}"
+
+
+
+  
 - name: Create ServiceNow Incident
   hosts: localhost
   gather_facts: no
@@ -13,7 +40,7 @@
       Authorization: "Bearer {{ servicenow_token }}"
       Content-Type: "application/json"
      body_format: json
-     body: "{"short_description": "Incident Title", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}"
+     body: '{"short_description": "Incident Title", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
      status code: 201
     register: response
 
