@@ -1,0 +1,23 @@
+--- 
+- name: Create ServiceNow Incident
+  hosts: localhost
+  gather_facts: no
+  vars:
+   servicenow_api_url: "https://ipaastest-apis.eu1.ccp.capgemini.com/api/now/table/incident"
+  tasks:
+  - name: Create Incident in ServiceNow
+    uri:
+     url: "{{ servicenow_api_url }}"
+     method: POST
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: "{"short_description": "Incident Title", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}"
+     status code: 201
+    register: response
+
+  - name: Check API response
+    debug:
+      var: response
+    
