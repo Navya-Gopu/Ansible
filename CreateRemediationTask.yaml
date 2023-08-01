@@ -1,3 +1,11 @@
+---
+- name: Obtain ServiceNow Token
+  hosts: localhost
+  gather_facts: no
+  
+
+
+
 - name: Create Remediation Task
   hosts: localhost
   gather_facts: no
