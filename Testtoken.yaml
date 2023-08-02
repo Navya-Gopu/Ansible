@@ -1,0 +1,28 @@
+--- 
+- name: Obtain ServiceNow Token
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+   oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+   client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
+   client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
+
+  tasks:
+  - name: Get token from servicenow
+    uri:
+     url: "{{ oauth_endpoint }}"
+     method: POST
+     headers:
+      Content-Type: "application/x-www-form-urlencoded"
+     body_format: form-urlencoded 
+     body: 
+      grant_type: "client_credentials"
+      client_id: "{{ client_id }}"
+      client_secret: "{{ client_secret }}"
+     
+    register: response
+
+  - name: Extract token from api response
+    set_fact:
+     servicenow_token: "{{ response.json.access_token }}"
