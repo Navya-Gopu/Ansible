@@ -8,13 +8,13 @@
   tasks:
   - name: Include the generated token
     include_vars:
-      file: "Testtoken.yaml"
+      file: "https://github.com/Navya-Gopu/Ansible/blob/main/bearertoken.yaml"
   - name: Create Incident in ServiceNow
     uri:
      url: "{{ servicenow_api_url }}"
      method: POST
      headers:
-      Authorization: "Bearer {{ token_dict.token }}"
+      Authorization: "Bearer {{ servicenow_token }}"
       Content-Type: "application/json"
      body_format: json
     # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
