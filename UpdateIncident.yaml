@@ -1,0 +1,31 @@
+- name: Update ServiceNow Incident
+  hosts: localhost
+  gather_facts: no
+  vars:
+   servicenow_api_url: "https://$($ipassUri)/incidents/external/$($incidentCorrelationID)?uuid=$uuid&companyName=$($companyName)"
+  tasks:
+  - name: Update Incident in ServiceNow
+    uri:
+     url: "{{ servicenow_api_url }}"
+     method: Patch
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: '{
+    "state":  "In Progress",
+    "assigneeContact":  "",
+    "activity":  [
+                     {
+                         "workLogType":  "comment",
+                         "workLogContact":  "Automation",
+                         "workLogDescription":  "Work in progress"
+                     }
+                 ]
+      }'
+     status_code: 200
+    register: response
+
+  - name: Check API response
+    debug:
+      var: response
