@@ -14,7 +14,7 @@
      url: "{{ oauth_endpoint }}"
      method: POST
      headers:
-      Content-Type: "application/x-www-form-urlEncoded"
+      Content-Type: "application/x-www-form-urlencoded"
      body_format: form-urlencoded 
      body: 
       grant_type: "client_credentials"
