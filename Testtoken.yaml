@@ -26,10 +26,9 @@
   - name: Extract token from api response
     set_fact:
      servicenow_token: "{{ response.json.access_token }}"
-  - name: Store token as a dictionary
+  - name: Store token in a variable file
     copy:
-     content: |
-      token_dict:
-       token: "{{ servicenow_token }}"
+     content: "{{ servicenow_token }}"
+     
      dest: "Testtoken.yaml"
       
