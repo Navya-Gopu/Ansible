@@ -15,7 +15,7 @@
      method: POST
      headers:
       Content-Type: "application/x-www-form-urlEncoded"
-     body: "grant_type= client_credentials&client_id={{ client_id }}&client_secret={{ client_secret }}"
+     body: "grant_type= "client_credentials"&client_id={{ client_id }}&client_secret={{ client_secret }}"
      status_code: 200
     register: response
 
