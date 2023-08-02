@@ -26,3 +26,10 @@
   - name: Extract token from api response
     set_fact:
      servicenow_token: "{{ response.json.access_token }}"
+  - name: Store token as a dictionary
+    vars:
+       token_dict:
+         token: "{{ bearer_token }}"
+    set_fact:
+      token_dict: "{{ token_dict }}"
+    register: token_dict_output
