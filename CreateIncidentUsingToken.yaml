@@ -19,12 +19,12 @@
       grant_type: "client_credentials"
       client_id: "{{ client_id }}"
       client_secret: "{{ client_secret }}"
-     status_code: 200
+     
     register: response
 
   - name: Extract token from api response
     set_fact:
-     servicenow_token: "{{ response.json.access.token }}"
+     servicenow_token: "{{ response.json.access_token }}"
 
 
 
