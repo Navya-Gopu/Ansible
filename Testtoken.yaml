@@ -2,7 +2,8 @@
 - name: Obtain ServiceNow Token
   hosts: localhost
   gather_facts: no
-
+  roles:
+   - my_role
   vars:
    oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
    client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
@@ -26,9 +27,9 @@
   - name: Extract token from api response
     set_fact:
      servicenow_token: "{{ response.json.access_token }}"
-  - name: Store token in a variable file
-    copy:
-     content: "{{ servicenow_token }}"
+ # - name: Store token in a variable file
+  #  copy:
+    # content: "{{ servicenow_token }}"
      
-     dest: "bearertoken.yaml"
+    # dest: "bearertoken.yaml"
       
