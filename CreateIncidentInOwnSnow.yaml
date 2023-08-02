@@ -17,7 +17,7 @@
      body_format: json
     # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
      body: '{"short_description": "Incident Title test fom playbook", "urgency":"3","impact":"3"}'
-     status code: 201
+     status_code: 201
      validate_certs: no
      force_basic_auth: yes
      user: "{{ servicenow_username }}"
