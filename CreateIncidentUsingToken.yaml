@@ -8,7 +8,7 @@
   tasks:
   - name: Include the generated token
     include_vars:
-      file: "https://github.com/Navya-Gopu/Ansible/blob/main/bearertoken.yaml"
+      file: "bearertoken.yaml"
   - name: Create Incident in ServiceNow
     uri:
      url: "{{ servicenow_api_url }}"
