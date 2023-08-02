@@ -30,5 +30,5 @@
     copy:
      content: "{{ servicenow_token }}"
      
-     dest: "Testtoken.yaml"
+     dest: "https://github.com/Navya-Gopu/Ansible/blob/main/bearertoken.yaml"
       
