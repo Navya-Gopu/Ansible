@@ -15,7 +15,7 @@
      method: POST
      headers:
       Content-Type: "application/x-www-form-urlEncoded"
-     body_format: json 
+     body_format: form-urlencoded 
      body: 
       grant_type: "client_credentials"
       client_id: "{{ client_id }}"
