@@ -14,7 +14,7 @@
      url: "{{ servicenow_api_url }}"
      method: POST
      headers:
-      Authorization: "Bearer {{ servicenow_token }}"
+      Authorization: "Bearer {{ token_dict.token }}"
       Content-Type: "application/json"
      body_format: json
     # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
