@@ -2,24 +2,21 @@
   
 - name: Create ServiceNow Incident
   hosts: localhost
-  gather_facts: no
-  
-  vars:
-   servicenow_api_url: "https://ipaastest-apis.eu1.ccp.capgemini.com/alert-business-service/alerts/event/update"
   tasks:
-  - name: Include the generated token
-    include_tasks: "Testtoken.yaml"
-      # file: "Testtoken.yaml"
-  - name: Create Incident in ServiceNow
-    uri:
-     url: "{{ servicenow_api_url }}"
-     method: POST
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
+   - name: Include the generated token
+     include_tasks: "Testtoken.yaml"
+     vars:
+       servicenow_api_url: "https://ipaastest-apis.eu1.ccp.capgemini.com/alert-business-service/alerts/event/update"
+   - name: Create Incident in ServiceNow
+     uri:
+      url: "{{ servicenow_api_url }}"
+      method: POST
+      headers:
+       Authorization: "Bearer {{ servicenow_token }}"
+       Content-Type: "application/json"
+      body_format: json
     # body: '{"short_description": "Incident Title test", "description":"Incident Description", "assigned_to":"Assigned User","urgency":"3","impact":"3"}'
-     body: '{
+      body: '{
        "header": {
        "topic": "cn/Capgemini Global Hub/de/dop/ic/%2B/tn/%2B/cs/cgsam/sp/%2B/at/%2B",
        "applicationId": "3879ed0f-2c0c-49d4-b868-625a5a726d55" },
@@ -42,19 +39,19 @@
        "correlationId": "",
        "suppressionFlag": "Not in MWM",
        "suppressionId": "NULL",
-      "deviceType": "",
-      "modelClass": "",
-      "modelType": "",
-      "diskName": "C:",
-      "memoryThreshold": "90",
-      "serviceName": "",
-      "cpuThreshold": ""
-      }
-      }'
+       "deviceType": "",
+       "modelClass": "",
+       "modelType": "",
+       "diskName": "C:",
+       "memoryThreshold": "90",
+       "serviceName": "",
+       "cpuThreshold": ""
+       }
+       }'
      status_code: 200
-    register: response
+     register: response
 
-  - name: Check API response
-    debug:
-      var: response
+   - name: Check API response
+     debug:
+      var: response.json
     
