@@ -1,7 +1,7 @@
 --- 
 - name: Obtain ServiceNow Token
-  hosts: localhost
-  gather_facts: no
+ # hosts: localhost
+ # gather_facts: no
   
   vars:
    oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
