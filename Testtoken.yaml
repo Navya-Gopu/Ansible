@@ -2,8 +2,7 @@
 - name: Obtain ServiceNow Token
   hosts: localhost
   gather_facts: no
-  roles:
-   - my_role
+  
   vars:
    oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
    client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
