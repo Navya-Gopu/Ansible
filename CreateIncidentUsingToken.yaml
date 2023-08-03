@@ -8,7 +8,7 @@
    servicenow_api_url: "https://ipaastest-apis.eu1.ccp.capgemini.com/alert-business-service/alerts/event/update"
   tasks:
   - name: Include the generated token
-    include: "Testtoken.yaml"
+    include_tasks: "Testtoken.yaml"
       # file: "Testtoken.yaml"
   - name: Create Incident in ServiceNow
     uri:
