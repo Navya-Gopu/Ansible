@@ -2,11 +2,11 @@
 - name: Obtain ServiceNow Token
   hosts: localhost
   tasks:
-  - name: Get token from servicenow
-    uri:
-     url: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
-     method: POST
-     headers:
+   - name: Get token from servicenow
+     uri:
+      url: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+      method: POST
+      headers:
       Content-Type: "application/x-www-form-urlencoded"
      body_format: form-urlencoded 
      body: 
@@ -14,11 +14,11 @@
       client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a"
       client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
      
-    register: response
+     register: response
 
-  - name: Extract token from api response
-    set_fact:
+   - name: Extract token from api response
+     set_fact:
      servicenow_token: "{{ response.json.access_token }}"
-    debug:
-     var: servicenow_token
+     debug:
+      var: servicenow_token
       
