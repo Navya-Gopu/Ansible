@@ -2,24 +2,27 @@
   hosts: localhost
   gather_facts: no
   vars:
-   servicenow_api_url: "https://$($ipassUri)/incidents/external/$($incidentCorrelationID)?uuid=$uuid&companyName=$($companyName)"
+   ipaas_api_url: "https://{{ ipaas_uri }}/incidents/external/{{ incident }}?uuid={{ uuid }}&companyName={{ companyName }}"
   tasks:
+  - name: Include the generated token
+     include_tasks: "Testtoken.yaml"
+
   - name: Update Incident in ServiceNow
     uri:
-     url: "{{ servicenow_api_url }}"
+     url: "{{ ipaas_api_url }}"
      method: Patch
      headers:
       Authorization: "Bearer {{ servicenow_token }}"
       Content-Type: "application/json"
      body_format: json
      body: '{
-    "state":  "In Progress",
-    "assigneeContact":  "",
+    "state":  "{{ state }}",
+    "assigneeContact":  "{{ assignee }}",
     "activity":  [
                      {
-                         "workLogType":  "comment",
-                         "workLogContact":  "Automation",
-                         "workLogDescription":  "Work in progress"
+                         "workLogType":  "{{ logType }}",
+                         "workLogContact":  "{{ logContact }}",
+                         "workLogDescription":  "{{ notes }}"
                      }
                  ]
       }'
