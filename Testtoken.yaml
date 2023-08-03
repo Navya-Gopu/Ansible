@@ -4,7 +4,8 @@
   #tasks:
    - name: Get token from servicenow
      uri:
-      url: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+     # url: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+       url: token_Url
       method: POST
       headers:
        Content-Type: "application/x-www-form-urlencoded"
