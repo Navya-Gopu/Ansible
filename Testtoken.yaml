@@ -19,6 +19,6 @@
    - name: Extract token from api response
      set_fact:
       servicenow_token: "{{ response.json.access_token }}"
-     debug:
-      var: servicenow_token
+      debug:
+       var: servicenow_token
       
