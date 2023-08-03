@@ -3,13 +3,14 @@
  # hosts: localhost
  # gather_facts: no
   
-  vars:
-   oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
-   client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
-   client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
+  
 
   tasks:
   - name: Get token from servicenow
+    vars:
+    oauth_endpoint: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
+    client_id: "InSjKoAdUmsMMGiifCo1QTZAhp4a" 
+    client_secret: "XuKN3XLWbfT1AGFpI3fsek5HOxwa"
     uri:
      url: "{{ oauth_endpoint }}"
      method: POST
