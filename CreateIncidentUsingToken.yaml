@@ -48,7 +48,7 @@
        "cpuThreshold": ""
        }
        }'
-     status_code: 200
+    # status_code: 200
      register: response
 
    - name: Check API response
