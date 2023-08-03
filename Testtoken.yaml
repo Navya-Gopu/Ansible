@@ -1,10 +1,6 @@
 --- 
 - name: Obtain ServiceNow Token
- # hosts: localhost
- # gather_facts: no
-  
-  
-
+  hosts: localhost
   tasks:
   - name: Get token from servicenow
     uri:
@@ -23,9 +19,6 @@
   - name: Extract token from api response
     set_fact:
      servicenow_token: "{{ response.json.access_token }}"
- # - name: Store token in a variable file
-  #  copy:
-    # content: "{{ servicenow_token }}"
-     
-    # dest: "bearertoken.yaml"
+    debug:
+     var: servicenow_token
       
