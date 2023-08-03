@@ -9,7 +9,7 @@
 
   - name: Update Incident in ServiceNow
     uri:
-     url: "{{ ipaas_api_url }}"
+     url: ipaas_api_url
      method: Patch
      headers:
       Authorization: "Bearer {{ servicenow_token }}"
