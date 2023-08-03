@@ -5,7 +5,7 @@
    ipaas_api_url: "https://{{ ipaas_uri }}/incidents/external/{{ incident }}?uuid={{ uuid }}&companyName={{ companyName }}"
   tasks:
   - name: Include the generated token
-     include_tasks: "Testtoken.yaml"
+    include_tasks: "Testtoken.yaml"
 
   - name: Update Incident in ServiceNow
     uri:
