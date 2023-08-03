@@ -1,7 +1,7 @@
 --- 
-- name: Obtain ServiceNow Token
-  hosts: localhost
-  tasks:
+#- name: Obtain ServiceNow Token
+ # hosts: localhost
+  #tasks:
    - name: Get token from servicenow
      uri:
       url: "https://ipaastest-apis.eu1.ccp.capgemini.com/token"
