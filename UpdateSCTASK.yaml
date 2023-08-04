@@ -1,1 +1,34 @@
+- name: Update ServiceNow SCTASK
+  hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Include the generated token
+    include_tasks: "Testtoken.yaml"
+  - name: Construct URL with parameters
+    set_fact:
+      api_url: "{{ ipaas_uri }}companyName={{ companyName | urlencode }}&withWorknotes=true"
+  - name: Update SCTASK in ServiceNow
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: '{
+    "closeNotes":  "{{ closeNotes}}",
+    "state":  "{{ state }}",
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType}}",
+                         "workLogDescription":  "{{ workNotes }}"
+                     }
+                 ],
+    "taskCoordinator":  "{{ assignee }}"
+}'
+     status_code: 200
+    register: response
 
+  - name: Check API response
+    debug:
+      var: response
