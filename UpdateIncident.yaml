@@ -6,7 +6,10 @@
     include_tasks: "Testtoken.yaml"
   - name: Update Incident in ServiceNow
     uri:
-     url: '{{ ipaas_uri }}'
+     url: "{{ ipaas_uri }}"
+     params:
+          uuid: "{{ uuid }}"
+          companyName: "{{ companyName }}"
      method: Patch
      headers:
       Authorization: "Bearer {{ servicenow_token }}"
