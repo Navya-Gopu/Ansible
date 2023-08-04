@@ -4,13 +4,13 @@
   tasks:
   - name: Include the generated token
     include_tasks: "Testtoken.yaml"
+  - name: Construct URL with parameters
+    set_fact:
+      api_url: "{{ ipaas_uri }}{{ uuid }}&{{ companyName }}"
   - name: Update Incident in ServiceNow
     uri:
-     url: "{{ ipaas_uri }}"
-     params:
-          uuid: "{{ uuid }}"
-          companyName: "{{ companyName }}"
-     method: Patch
+     url: "{{ api_url }}"
+     method: PATCH
      headers:
       Authorization: "Bearer {{ servicenow_token }}"
       Content-Type: "application/json"
