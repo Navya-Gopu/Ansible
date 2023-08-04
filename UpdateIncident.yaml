@@ -6,7 +6,7 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}{{ uuid }}&{{ companyName }}"
+      api_url: "{{ ipaas_uri }}{{ uuid }}"
   - name: Update Incident in ServiceNow
     uri:
      url: "{{ api_url }}"
