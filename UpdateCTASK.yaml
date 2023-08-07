@@ -11,7 +11,7 @@
     uri:
      url: "{{ api_url }}"
      method: PATCH
-     timeout: 30
+     timeout: 60
      headers:
       Authorization: "Bearer {{ servicenow_token }}"
       Content-Type: "application/json"
@@ -27,9 +27,9 @@
                  ],
     "taskCoordinator":  "{{ assignee }}"
 }'
+    retries: 3
      status_code: 200
     register: response
-    retries: 3
   - name: Check API response
     debug:
       var: response
