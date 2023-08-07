@@ -6,7 +6,7 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}&withWorknotes=true"
+      api_url: "{{ ipaas_uri }}&companyName={{ companyName | urlencode }}&withWorknotes=true"
   - name: Update CTASK in ServiceNow
     uri:
      url: "{{ api_url }}"
@@ -17,7 +17,6 @@
       Content-Type: "application/json"
      body_format: json
      body: '{
-    "closeNotes":  "{{ closeNotes}}",
     "state":  "{{ state }}",
     "activity":  [
                      {
@@ -26,7 +25,7 @@
                      }
                  ],
     "taskCoordinator":  "{{ assignee }}"
-}'
+   }'
     
      status_code: 200
     register: response
