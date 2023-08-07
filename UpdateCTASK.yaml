@@ -27,7 +27,7 @@
                  ],
     "taskCoordinator":  "{{ assignee }}"
 }'
-    retries: 3
+     retries: 3
      status_code: 200
     register: response
   - name: Check API response
