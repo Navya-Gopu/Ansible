@@ -9,15 +9,9 @@
       api_url: "{{ ipaas_uri }}/incident-business-service/incidents/external/{{ incident }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}"
       action: "{{ action }}"
   ###################################################
-  - name: Assign Incident in ServiceNow
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: '{
+  - name: Create Body for Assign Task
+    set_fact:
+      body: '{
     "state":  "{{ state }}",
     "assigneeContact":  "{{ assignee }}",
     "activity":  [
@@ -28,20 +22,11 @@
                      }
                  ]
       }'
-     status_code: 200
-    
     when: action == "assign"
-    register: result
-###################################################
-  - name: Update Incident in ServiceNow
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: '{
+      ###################################################
+  - name: Create Body for Update Task
+    set_fact:
+      body: '{
     "activity":  [
                      {
                          "workLogType":  "{{ logType }}",
@@ -50,20 +35,11 @@
                      }
                  ]
       }'
-     status_code: 200
-    #register: result
     when: action == "update"
-    register: result
-###################################################
-  - name: De-Assign Incident in ServiceNow
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: '{
+      ###################################################
+  - name: Create Body for De-Assign Task
+    set_fact:
+      body: '{
     "assigneeContact":  "",
     "activity":  [
                      {
@@ -73,19 +49,11 @@
                      }
                  ]
       }'
-     status_code: 200
     when: action == "deassign"
-    register: result
-###################################################
-  - name: Resolve Incident in ServiceNow
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: '{
+ ###################################################
+  - name: Create Body for Resolve Task
+    set_fact:
+      body: '{
     "resolutionMethod":  "{{ resolutionMethod }}",
     "activity":  [
                      {
@@ -97,9 +65,20 @@
     "resolutionDescription":  "{{ resolutionNotes }}",
     "state": "{{ state }}"
     }'
-     status_code: 200
     when: action == "resolve"
+  ###################################################
+  - name: API
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: "{{ body }}"
+     status_code: 200
     register: result
+
 ###################################################
   - name: Check API response
     debug:
