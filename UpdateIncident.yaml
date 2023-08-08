@@ -109,6 +109,6 @@
     when: response.status ==200
 
   - name: Check API response status
-     fail:
-          msg: "Failed to update Incident. Error: {{ response.json }}"
-     when: response.status !=200
+    fail:
+         msg: "Failed to update Incident. Error: {{ response.json }}"
+    when: response.status !=200
