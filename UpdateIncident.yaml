@@ -100,13 +100,13 @@
     when: action == "resolve"
 ###################################################
   - name: Check API response
-     debug:
+    debug:
       var: response
 
   - name: Check API response status
-     debug:
+    debug:
           msg: "Incident updated successfully"
-     when: response.status ==200
+    when: response.status ==200
 
   - name: Check API response status
      fail:
