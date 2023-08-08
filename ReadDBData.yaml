@@ -1,0 +1,17 @@
+---
+- name: Query the Data
+  hosts: localhost
+  gather_facts: no
+  tasks:
+   - name: Execute SQL query
+     mysql_db:
+      login_user: 
+      login_password:
+      login_db: 
+      sql:
+     register: 
+     
+   - name: Display result
+     debug:
+       var: query_result.stdout_lines
+      
