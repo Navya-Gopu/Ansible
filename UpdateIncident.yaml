@@ -106,9 +106,9 @@
   - name: Check API response status
     debug:
           msg: "Incident updated successfully"
-    when: result.status ==200
+    when: status ==200
 
   - name: Check API response status
     fail:
          msg: "Failed to update Incident. Error: {{ response.json }}"
-    when: result.status !=200
+    when: status !=200
