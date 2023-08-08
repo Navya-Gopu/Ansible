@@ -101,7 +101,7 @@
 ###################################################
   - name: Check API response
     debug:
-         msg: {{ result.status }}
+         msg: result.status
 
   - name: Check API response status
     debug:
