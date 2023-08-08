@@ -50,7 +50,7 @@
                  ]
       }'
      status_code: 200
-    register: response
+    register: result
     when: action == "update"
 ###################################################
   - name: De-Assign Incident in ServiceNow
@@ -101,14 +101,14 @@
 ###################################################
   - name: Check API response
     debug:
-         msg: response
+         msg: {{ result.status }}
 
   - name: Check API response status
     debug:
           msg: "Incident updated successfully"
-    when: response.status ==200
+    when: result.status ==200
 
   - name: Check API response status
     fail:
          msg: "Failed to update Incident. Error: {{ response.json }}"
-    when: response.status !=200
+    when: result.status !=200
