@@ -1,0 +1,11 @@
+---
+- name: Example playbook using Tower credential variables
+  hosts: 
+  tasks:
+    - name: Print Tower InstanceDetails Username
+      debug:
+        var: InstanceDetails.username
+
+    - name: Print Tower InstanceDetails Password
+      debug:
+        var: InstanceDetails.password
