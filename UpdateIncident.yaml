@@ -29,7 +29,7 @@
       }'
      status_code: 200
     register: response
-    when: {{ action }} == "assign"
+    when: "{{ action }}" == "assign"
 ###################################################
   - name: Update Incident in ServiceNow
     uri:
@@ -50,7 +50,7 @@
       }'
      status_code: 200
     register: response
-    when: {{ action }} == "update"
+    when: "{{ action }}" == "update"
 ###################################################
   - name: De-Assign Incident in ServiceNow
     uri:
@@ -72,7 +72,7 @@
       }'
      status_code: 200
     register: response
-    when: {{ action }} == "deassign"
+    when: "{{ action }}" == "deassign"
 ###################################################
   - name: Resolve Incident in ServiceNow
     uri:
@@ -96,7 +96,7 @@
     }'
      status_code: 200
     register: response
-    when: {{ action }} == "resolve"
+    when: "{{ action }}" == "resolve"
 ###################################################
   - name: Check API response
     debug:
