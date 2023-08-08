@@ -55,4 +55,14 @@
    - name: Check API response
      debug:
       var: response.json
+
+   - name: Check API response status
+     debug:
+          msg: "Incident created successfully"
+     when: response.status ==201
+
+   - name: Check API response status
+     fail:
+          msg: "Failed to create Incident. Error: {{ response.json }}"
+     when: response.status !=201
     
