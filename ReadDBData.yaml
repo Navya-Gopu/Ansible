@@ -9,7 +9,7 @@
       login_password:
       login_db: 
       sql:
-     register: 
+     register: query_result
      
    - name: Display result
      debug:
