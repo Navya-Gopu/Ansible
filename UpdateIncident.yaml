@@ -6,8 +6,9 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}"
-  - name: Update Incident in ServiceNow
+      api_url: "{{ ipaas_uri }}/incident-business-service/incidents/external/{{ incident }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}"
+  ###################################################
+  - name: Assign Incident in ServiceNow
     uri:
      url: "{{ api_url }}"
      method: PATCH
@@ -28,7 +29,75 @@
       }'
      status_code: 200
     register: response
-
+    when: {{ action }} == "assign"
+###################################################
+  - name: Update Incident in ServiceNow
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: '{
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType }}",
+                         "workLogContact":  "{{ logContact }}",
+                         "workLogDescription":  "{{ notes }}"
+                     }
+                 ]
+      }'
+     status_code: 200
+    register: response
+    when: {{ action }} == "update"
+###################################################
+  - name: De-Assign Incident in ServiceNow
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: '{
+    "assigneeContact":  "",
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType }}",
+                         "workLogContact":  "{{ logContact }}",
+                         "workLogDescription":  "{{ notes }}"
+                     }
+                 ]
+      }'
+     status_code: 200
+    register: response
+    when: {{ action }} == "deassign"
+###################################################
+  - name: Resolve Incident in ServiceNow
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: '{
+    "resolutionMethod":  "{{ resolutionMethod }}",
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType }}",
+                         "workLogContact":  "{{ logContact }}",
+                         "workLogDescription":  "{{ notes }}"
+                     }
+                 ],
+    "resolutionDescription":  "{{ resolutionNotes }}",
+    "state": "{{ state }}"
+    }'
+     status_code: 200
+    register: response
+    when: {{ action }} == "resolve"
+###################################################
   - name: Check API response
     debug:
       var: response
