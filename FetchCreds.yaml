@@ -1,6 +1,6 @@
 ---
 - name: Example playbook using Tower credential variables
-  hosts: 
+  hosts: localhost
   tasks:
     - name: Print Tower InstanceDetails Username
       debug:
