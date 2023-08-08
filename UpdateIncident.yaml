@@ -50,9 +50,7 @@
                  ]
       }'
      status_code: 200
-    register:
-      - response
-      - status
+    register: status
     when: action == "update"
 ###################################################
   - name: De-Assign Incident in ServiceNow
@@ -103,7 +101,7 @@
 ###################################################
   - name: Check API response
     debug:
-      var: response, status
+      var: status
 
   - name: Check API response status
     debug:
