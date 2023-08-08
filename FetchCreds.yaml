@@ -8,4 +8,4 @@
 
     - name: Print Tower InstanceDetails Password
       debug:
-        var: ansible_pass
+        var: ansible_password
