@@ -12,8 +12,10 @@
        body_format: form-urlencoded 
        body: 
         grant_type: "client_credentials"
-        client_id: "{{ token_client_id }}"
-        client_secret: "{{ token_client_secret }}"
+       # client_id: "{{ token_client_id }}"
+       # client_secret: "{{ token_client_secret }}"
+         client_id: "{{ ansible_user }}"
+         client_secret: "{{ ansible_password }}"
      
      register: response
 
