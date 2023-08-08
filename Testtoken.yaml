@@ -4,8 +4,8 @@
   #tasks:
    - name: Retrive creds
      set_fact:
-       api_client_id: "{{ ansible_user }}"
-       api_client_secret: "{{ ansible_password }}"
+       api_client_id: "{{ create_inc_creds.username }}"
+       api_client_secret: "{{ create_inc_creds.password }}"
        
    - name: Get token from servicenow
      uri:
