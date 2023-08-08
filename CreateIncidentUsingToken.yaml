@@ -28,7 +28,7 @@
        "systemPlatform": "Windows",
        "impactedCi": "DSW12SQL01",
        "templateName": "CGSAM.Default",
-       "externalSystemTicketId": "CoreOpTest_2023080817022642",
+       "externalSystemTicketId": "CoreOpTest_2023080817401120",
        "externalSystem": "Automation_EU",
        "shortDescription": "Correlation Testing",
        "fullDescription": "Correlation Testing",
