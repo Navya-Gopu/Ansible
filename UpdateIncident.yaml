@@ -29,8 +29,9 @@
                  ]
       }'
      status_code: 200
-    register: result
+    
     when: action == "assign"
+    register: result
 ###################################################
   - name: Update Incident in ServiceNow
     uri:
@@ -73,8 +74,8 @@
                  ]
       }'
      status_code: 200
-    register: response
     when: action == "deassign"
+    register: result
 ###################################################
   - name: Resolve Incident in ServiceNow
     uri:
@@ -97,8 +98,8 @@
     "state": "{{ state }}"
     }'
      status_code: 200
-    register: response
     when: action == "resolve"
+    register: result
 ###################################################
   - name: Check API response
     debug:
