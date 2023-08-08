@@ -96,19 +96,19 @@
     "state": "{{ state }}"
     }'
      status_code: 200
-    register: response
+    register: response, status
     when: action == "resolve"
 ###################################################
   - name: Check API response
     debug:
-      var: response
+      var: response, status
 
   - name: Check API response status
     debug:
           msg: "Incident updated successfully"
-    when: response.status ==200
+    when: status ==200
 
   - name: Check API response status
     fail:
          msg: "Failed to update Incident. Error: {{ response.json }}"
-    when: response.status !=200
+    when: status !=200
