@@ -4,12 +4,9 @@
   tasks:
   - name: Task block with rescue
     block:
-      - name: Retrive creds
+      - name: Retrive ipaas url
         set_fact:
           url: "{{ ansible_user }}"
-      - name: Display variables
-        debug:
-          var: url
           
       - name: Include the generated token
         include_tasks: "Testtoken.yaml"
@@ -72,7 +69,7 @@
        }'
         when: action == "resolve"
       ###################################################
-      - name: API
+      - name: API Request
         uri:
          url: "{{ api_url }}"
          method: PATCH
