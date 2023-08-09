@@ -81,10 +81,10 @@
 
   - name: Check API response status
     debug:
-          msg: "Incident updated successfully"
+          msg: "CTASK updated successfully"
     when: result.status ==200
 
   - name: Check API response status
     fail:
-         msg: "Failed to update Incident. Error: {{ response.json }}"
+         msg: "Failed to update CTASK. Error: {{ response.json }}"
     when: result.status !=200
