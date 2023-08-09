@@ -8,9 +8,6 @@
        #api_client_secret: "{{ ansible_password}}"
        url: "{{ ansible_user }}"
        parts: "{{ ansible_password }}"
-       #parts: "{{ parts.split('~') }}"
-       #api_client_id: "{{ parts[0] }}"
-       #api_client_secret: "{{ parts[1] }}"
    
    - name: Split the string
      set_fact:
@@ -20,13 +17,6 @@
      set_fact:
        api_client_id: "{{ parts[0] }}"
        api_client_secret: "{{ parts[1] }}"
-
-   - name: Display variables
-     debug:
-       var: api_client_id
-   - name: Display variables
-     debug:
-       var: api_client_secret
       
    - name: Get token from servicenow
      uri:
