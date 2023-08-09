@@ -64,7 +64,7 @@
       register: result
       failed_when: result.status != 200
  ###################################################
- rescue:
+  rescue:
     - name: Check API response
       debug:
         var: result
