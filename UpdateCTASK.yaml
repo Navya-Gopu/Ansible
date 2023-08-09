@@ -6,7 +6,7 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}/rr-bus-Tasks-CorrectByTicketId/tasks/{{ ctask }}?companyName={{ companyName | urlencode }}&withWorknotes=true"
+      api_url: "{{ ipaas_uri }}/rr-bus-Tasks-CorrectByTicketId/tasks/{{ ctask }}?&companyName={{ companyName | urlencode }}&withWorknotes=true"
       action: "{{ action }}"
   ###################################################
   - name: Create Body for Assign Task
