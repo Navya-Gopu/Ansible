@@ -4,11 +4,19 @@
   tasks:
   - name: Task block with rescue
     block:
+      - name: Retrive creds
+        set_fact:
+          url: "{{ ansible_user }}"
+      - name: Display variables
+        debug:
+          var: url
+          
       - name: Include the generated token
         include_tasks: "Testtoken.yaml"
+        
       - name: Construct URL with parameters
         set_fact:
-          api_url: "{{ ipaas_uri }}/rr-bus-Tasks-CorrectByTicketId/tasks/{{ ctask }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}&withWorknotes=true"
+          api_url: "{{ url }}/rr-bus-Tasks-CorrectByTicketId/tasks/{{ ctask }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}&withWorknotes=true"
           action: "{{ action }}"
       ###################################################
       - name: Create Body for Assign Task
