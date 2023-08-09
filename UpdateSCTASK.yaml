@@ -50,29 +50,31 @@
 }'
     when: action == "resolve"
   ###################################################
-  - name: API Request
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: "{{ body }}"
-     status_code: 200
-    register: result
-    failed_when: result.status != 200
+  block:
+    - name: API Request
+      uri:
+       url: "{{ api_url }}"
+       method: PATCH
+       headers:
+        Authorization: "Bearer {{ servicenow_token }}"
+        Content-Type: "application/json"
+       body_format: json
+       body: "{{ body }}"
+       status_code: 200
+      register: result
+      failed_when: result.status != 200
  ###################################################
-  - name: Check API response
-    debug:
-      var: result
-
-  - name: Check API response status
-    debug:
-          msg: "SCTASK updated successfully"
-    when: result.status ==200
-
-  - name: Check API response status
-    fail:
-         msg: "Failed to update SCTASK. Error: {{ result.json }}"
-    when: result.status !=200
+ rescue:
+    - name: Check API response
+      debug:
+        var: result
+  
+    - name: Check API response status
+      debug:
+            msg: "SCTASK updated successfully"
+      when: result.status ==200
+  
+    - name: Check API response status
+      fail:
+           msg: "Failed to update SCTASK. Error: {{ result.json }}"
+      when: result.status !=200
