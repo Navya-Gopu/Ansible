@@ -6,7 +6,7 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}&fullResponse=true"
+      api_url: "{{ ipaas_uri }}/task-business-service/tasks/{{ sctask }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}&fullResponse=true"
       action: "{{ action }}"
   ###################################################
   - name: Create Body for Assign Task
@@ -68,10 +68,10 @@
 
   - name: Check API response status
     debug:
-          msg: "CTASK updated successfully"
+          msg: "SCTASK updated successfully"
     when: result.status ==200
 
   - name: Check API response status
     fail:
-         msg: "Failed to update CTASK. Error: {{ result.json }}"
+         msg: "Failed to update SCTASK. Error: {{ result.json }}"
     when: result.status !=200
