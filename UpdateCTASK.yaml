@@ -89,5 +89,5 @@
     rescue:
       - name: Check API response status
         fail:
-             msg: "Failed to update CTASK. Error: {{ result.json }}"
+             msg: "Failed to update CTASK. Error: {{ result }}"
         when: result.status !=200
