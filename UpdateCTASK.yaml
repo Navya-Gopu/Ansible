@@ -6,17 +6,11 @@
     include_tasks: "Testtoken.yaml"
   - name: Construct URL with parameters
     set_fact:
-      api_url: "{{ ipaas_uri }}&companyName={{ companyName | urlencode }}&withWorknotes=true"
-  - name: Update CTASK in ServiceNow
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     timeout: 60
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: '{
+      api_url: "{{ ipaas_uri }}/rr-bus-Tasks-CorrectByTicketId/tasks/{{ ctask }}?companyName={{ companyName | urlencode }}&withWorknotes=true"
+  ###################################################
+  - name: Create Body for Assign Task
+    set_fact:
+      body: '{
     "state":  "{{ state }}",
     "activity":  [
                      {
@@ -26,9 +20,70 @@
                  ],
     "taskCoordinator":  "{{ assignee }}"
    }'
-    
+    when: action == "assign"
+  ###################################################
+  - name: Create Body for Update Task
+    set_fact:
+      body: '{
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType}}",
+                         "workLogDescription":  "{{ workNotes }}"
+                     }
+                 ]
+   }'
+    when: action == "update"
+  ###################################################
+  - name: Create Body for De-Assign Task
+    set_fact:
+      body: '{
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType}}",
+                         "workLogDescription":  "{{ workNotes }}"
+                     }
+                 ],
+    "taskCoordinator":  ""
+   }'
+    when: action == "deassign"
+ ###################################################
+  - name: Create Body for Resolve Task
+    set_fact:
+      body: '{
+    "state":  "{{ state }}",
+    "activity":  [
+                     {
+                         "workLogType":  "{{ logType}}",
+                         "workLogDescription":  "{{ workNotes }}"
+                     }
+                 ],
+    "closeNotes":  "{{ closeNotes }}",
+   }'
+    when: action == "resolve"
+  ###################################################
+  - name: API
+    uri:
+     url: "{{ api_url }}"
+     method: PATCH
+     timeout: 60
+     headers:
+      Authorization: "Bearer {{ servicenow_token }}"
+      Content-Type: "application/json"
+     body_format: json
+     body: "{{ body }}"
      status_code: 200
     register: response
+  ###################################################
   - name: Check API response
     debug:
-      var: response
+      var: result
+
+  - name: Check API response status
+    debug:
+          msg: "Incident updated successfully"
+    when: result.status ==200
+
+  - name: Check API response status
+    fail:
+         msg: "Failed to update Incident. Error: {{ response.json }}"
+    when: result.status !=200
