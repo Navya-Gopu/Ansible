@@ -2,94 +2,96 @@
   hosts: localhost
   gather_facts: no
   tasks:
-  - name: Include the generated token
-    include_tasks: "Testtoken.yaml"
-  - name: Construct URL with parameters
-    set_fact:
-      api_url: "{{ ipaas_uri }}/incident-business-service/incidents/external/{{ incident }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}"
-      action: "{{ action }}"
-  ###################################################
-  - name: Create Body for Assign Task
-    set_fact:
-      body: '{
-    "state":  "{{ state }}",
-    "assigneeContact":  "{{ assignee }}",
-    "activity":  [
-                     {
-                         "workLogType":  "{{ logType }}",
-                         "workLogContact":  "{{ logContact }}",
-                         "workLogDescription":  "{{ notes }}"
-                     }
-                 ]
-      }'
-    when: action == "assign"
+  - name: Task block with rescue
+    block:
+      - name: Include the generated token
+        include_tasks: "Testtoken.yaml"
+      - name: Construct URL with parameters
+        set_fact:
+          api_url: "{{ ipaas_uri }}/incident-business-service/incidents/external/{{ incident }}?uuid={{ uuid | urlencode }}&companyName={{ companyName | urlencode }}"
+          action: "{{ action }}"
       ###################################################
-  - name: Create Body for Update Task
-    set_fact:
-      body: '{
-    "activity":  [
-                     {
-                         "workLogType":  "{{ logType }}",
-                         "workLogContact":  "{{ logContact }}",
-                         "workLogDescription":  "{{ notes }}"
-                     }
-                 ]
-      }'
-    when: action == "update"
+      - name: Create Body for Assign Task
+        set_fact:
+          body: '{
+        "state":  "{{ state }}",
+        "assigneeContact":  "{{ assignee }}",
+        "activity":  [
+                         {
+                             "workLogType":  "{{ logType }}",
+                             "workLogContact":  "{{ logContact }}",
+                             "workLogDescription":  "{{ notes }}"
+                         }
+                     ]
+          }'
+        when: action == "assign"
+          ###################################################
+      - name: Create Body for Update Task
+        set_fact:
+          body: '{
+        "activity":  [
+                         {
+                             "workLogType":  "{{ logType }}",
+                             "workLogContact":  "{{ logContact }}",
+                             "workLogDescription":  "{{ notes }}"
+                         }
+                     ]
+          }'
+        when: action == "update"
+          ###################################################
+      - name: Create Body for De-Assign Task
+        set_fact:
+          body: '{
+        "assigneeContact":  "",
+        "activity":  [
+                         {
+                             "workLogType":  "{{ logType }}",
+                             "workLogContact":  "{{ logContact }}",
+                             "workLogDescription":  "{{ notes }}"
+                         }
+                     ]
+          }'
+        when: action == "deassign"
+     ###################################################
+      - name: Create Body for Resolve Task
+        set_fact:
+          body: '{
+        "resolutionMethod":  "{{ resolutionMethod }}",
+        "activity":  [
+                         {
+                             "workLogType":  "{{ logType }}",
+                             "workLogContact":  "{{ logContact }}",
+                             "workLogDescription":  "{{ notes }}"
+                         }
+                     ],
+        "resolutionDescription":  "{{ resolutionNotes }}",
+        "state": "{{ state }}"
+        }'
+        when: action == "resolve"
       ###################################################
-  - name: Create Body for De-Assign Task
-    set_fact:
-      body: '{
-    "assigneeContact":  "",
-    "activity":  [
-                     {
-                         "workLogType":  "{{ logType }}",
-                         "workLogContact":  "{{ logContact }}",
-                         "workLogDescription":  "{{ notes }}"
-                     }
-                 ]
-      }'
-    when: action == "deassign"
- ###################################################
-  - name: Create Body for Resolve Task
-    set_fact:
-      body: '{
-    "resolutionMethod":  "{{ resolutionMethod }}",
-    "activity":  [
-                     {
-                         "workLogType":  "{{ logType }}",
-                         "workLogContact":  "{{ logContact }}",
-                         "workLogDescription":  "{{ notes }}"
-                     }
-                 ],
-    "resolutionDescription":  "{{ resolutionNotes }}",
-    "state": "{{ state }}"
-    }'
-    when: action == "resolve"
-  ###################################################
-  - name: API
-    uri:
-     url: "{{ api_url }}"
-     method: PATCH
-     headers:
-      Authorization: "Bearer {{ servicenow_token }}"
-      Content-Type: "application/json"
-     body_format: json
-     body: "{{ body }}"
-     status_code: 200
-    register: result
-
-###################################################
-  - name: Check API response
-    debug:
-      var: result
-
-  - name: Check API response status
-    debug:
-          msg: "Incident updated successfully"
-    when: result.status ==200
-
-  - name: Check API response status
-    fail:
-         msg: "Failed to update Incident. Error: {{ result.json }}"
-    when: result.status !=200
+      - name: API
+        uri:
+         url: "{{ api_url }}"
+         method: PATCH
+         headers:
+          Authorization: "Bearer {{ servicenow_token }}"
+          Content-Type: "application/json"
+         body_format: json
+         body: "{{ body }}"
+         status_code: 200
+        register: result
+        failed_when: result.status != 200
+    ###################################################
+      - name: Check API response
+        debug:
+          var: result
+    
+      - name: Check API response status
+        debug:
+              msg: "Incident updated successfully"
+        when: result.status ==200
+    rescue:
+      - name: Check API response status
+        fail:
+             msg: "Failed to update Incident. Error: {{ result }}"
+        when: result.status !=200
