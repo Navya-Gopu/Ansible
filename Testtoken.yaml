@@ -4,13 +4,16 @@
   #tasks:
    - name: Retrive creds
      set_fact:
-       api_client_id: "{{ ansible_user }}"
-       api_client_secret: "{{ ansible_password}}"
+       #api_client_id: "{{ ansible_user }}"
+       #api_client_secret: "{{ ansible_password}}"
+       url: "{{ ansible_user }}"
+       parts: "{{ ansible_password.split('~') }}"
+       api_client_id: "{{ parts[0] }}"
+       api_client_secret: "{{ parts[1] }}"
        
    - name: Get token from servicenow
      uri:
-    
-       url: "{{ token_url }}"
+       url: "{{ url }}/token"
        method: POST
        headers:
         Content-Type: "application/x-www-form-urlencoded"
