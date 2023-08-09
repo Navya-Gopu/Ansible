@@ -73,7 +73,7 @@
         debug:
               msg: "SCTASK updated successfully"
         when: result.status ==200
-     rescue:
+    rescue:
       - name: Check API response status
         fail:
              msg: "Failed to update SCTASK. Error: {{ result }}"
