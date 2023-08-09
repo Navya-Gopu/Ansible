@@ -7,8 +7,8 @@
        #api_client_id: "{{ ansible_user }}"
        #api_client_secret: "{{ ansible_password}}"
        url: "{{ ansible_user }}"
-       parts: ""
-       parts: "{{ ansible_password.split('~') }}"
+       parts: "{{ ansible_password }}"
+       parts: "{{ parts.split('~') }}"
        api_client_id: "{{ parts[0] }}"
        api_client_secret: "{{ parts[1] }}"
        
