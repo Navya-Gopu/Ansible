@@ -73,7 +73,7 @@
      body_format: json
      body: "{{ body }}"
      status_code: 200
-    register: response
+    register: result
   ###################################################
   - name: Check API response
     debug:
