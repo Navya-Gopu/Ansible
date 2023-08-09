@@ -6,10 +6,10 @@
    - name: Retrive ipaas url
      set_fact:
        url: "{{ ansible_user }}"
-   - name: Display
-     debug:
-       var: url
-       #incident_url: "{{ url }}/alert-business-service/alerts/event/update"
+       
+   - name: Construct URL with params
+     set_fact:
+       incident_url: "{{ url }}/alert-business-service/alerts/event/update"
           
    - name: Include the generated token
      include_tasks: "Testtoken.yaml"
