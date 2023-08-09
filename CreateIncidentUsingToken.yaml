@@ -3,6 +3,11 @@
 - name: Create ServiceNow Incident
   hosts: localhost
   tasks:
+   - name: Retrive ipaas url
+        set_fact:
+          url: "{{ ansible_user }}"
+          incident_url: "{{ url }}/alert-business-service/alerts/event/update"
+          
    - name: Include the generated token
      include_tasks: "Testtoken.yaml"
     # vars:
