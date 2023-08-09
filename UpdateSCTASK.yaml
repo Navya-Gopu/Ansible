@@ -63,7 +63,7 @@
          body: "{{ body }}"
          status_code: 200
         register: result
-        failed_when: result.status != 200
+        
    ###################################################
       - name: Check API response
         debug:
