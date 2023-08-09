@@ -86,5 +86,5 @@
 
   - name: Check API response status
     fail:
-         msg: "Failed to update CTASK. Error: {{ response.json }}"
+         msg: "Failed to update CTASK. Error: {{ result.json }}"
     when: result.status !=200
