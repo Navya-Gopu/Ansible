@@ -2,6 +2,7 @@
   
 - name: Create ServiceNow Incident
   hosts: localhost
-- name: Set variables on an imported playbook
-  ansible.builtin.import_playbook: Testtoken.yml
+  tasks: 
+   - name: Set variables on an imported playbook
+     import_playbook: Testtoken.yml
   
