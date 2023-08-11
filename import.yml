@@ -1,5 +1,4 @@
 ---
 - name: Set variables on an imported playbook
   ansible.builtin.import_playbook: Testtoken.yml
-  vars:
-    service: httpd
+  
