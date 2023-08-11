@@ -1,5 +1,5 @@
 ---
-- name: Create ServiceNow Incident
-  hosts: localhost
-- name: Include a play after another play
-  ansible.builtin.import_playbook: Testtoken.yaml
+- name: Set variables on an imported playbook
+  ansible.builtin.import_playbook: Testtoken.yml
+  vars:
+    service: httpd
