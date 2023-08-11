@@ -4,5 +4,5 @@
   hosts: localhost
   tasks: 
    - name: Set variables on an imported playbook
-     import_playbook: Testtoken.yml
+     import_playbook: Testtoken.yaml
   
