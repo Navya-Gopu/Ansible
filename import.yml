@@ -1,4 +1,7 @@
-- hosts: localhost
+---
+  
+- name: Create ServiceNow Incident
+  hosts: localhost
   tasks:
     - ansible.builtin.debug:
         msg: play1
