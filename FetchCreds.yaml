@@ -4,7 +4,8 @@
   tasks:
     - name: Print Tower InstanceDetails Username
       debug:
-        var: ansible_user
+        #var: ansible_user
+        var: {{ ansible_user }}
 
     - name: Print Tower InstanceDetails Password
       debug:
