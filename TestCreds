@@ -1,5 +1,5 @@
 --- 
-  - name: Retrive creds
+- name: Retrive creds
      set_fact:
        #api_client_id: "{{ ansible_user }}"
        #api_client_secret: "{{ ansible_password}}"
