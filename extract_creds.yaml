@@ -11,4 +11,4 @@
 
     - name: display
       debug:
-        msg:
+            msg: "{{ url }}"
