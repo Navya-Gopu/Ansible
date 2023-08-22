@@ -1,12 +1,11 @@
----
-- name: Example playbook using Tower credential variables
-  hosts: localhost
-  tasks:
-    - name: Print Tower InstanceDetails Username
-      debug:
-        #var: ansible_user
-        var: {{ ansible_user }}
+--- 
+- name: Retrive creds
+     set_fact:
+       #api_client_id: "{{ ansible_user }}"
+       #api_client_secret: "{{ ansible_password}}"
+       url: "{{ ansible_user }}"
+       parts: "{{ ansible_password }}"
 
-    - name: Print Tower InstanceDetails Password
+    - name: display
       debug:
-        var: ansible_password
+            msg: "{{ url }}"
