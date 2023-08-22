@@ -1,0 +1,11 @@
+---
+ - name: Retrive creds
+     set_fact:
+       #api_client_id: "{{ ansible_user }}"
+       #api_client_secret: "{{ ansible_password}}"
+       url: "{{ ansible_user }}"
+       parts: "{{ ansible_password }}"
+
+    - name: display
+      debug:
+            msg: "{{ url }}"
