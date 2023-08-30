@@ -3,7 +3,7 @@
   hosts: localhost
   tasks:
    - name: import sub playbook
-     set_fact:
+     include_vars:
        HOSTS: 15.206.82.173
    - import_playbook: linux_is_alive.yml
      
