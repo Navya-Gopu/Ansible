@@ -1,4 +1,4 @@
 ---
-- name: Include the generated token
+- name: Import playbook
   hosts: localhost
   import_playbook: linux_is_alive.yml
