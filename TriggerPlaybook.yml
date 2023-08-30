@@ -1,2 +1,3 @@
 ---
-- import_playbook: linux_is_alive.yml
+- name: Include the generated token
+  import_playbook: linux_is_alive.yml
