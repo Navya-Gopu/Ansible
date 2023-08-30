@@ -1,4 +1,8 @@
 ---
-- name: Import playbook
+- name: Master playbook
   hosts: localhost
-  import_playbook: linux_is_alive.yml
+  tasks:
+   - name: import sub playbook
+     import_playbook: linux_is_alive.yml
+     vars:
+      HOSTS: 15.206.82.173
