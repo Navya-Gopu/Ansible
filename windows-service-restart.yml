@@ -40,7 +40,7 @@
      - name: Log output for SYNTBOT when successful
        debug:
          msg:
-          - "SYNTBOT_OUTPUT : SUCCESSFUL on {{ HOSTS }}"
+          - "SYNTBOT_OUTPUT : SUCCESSFUL on {{ HOSTS }} on {{ SERVICE }}"
 
      rescue:
      - name: Log output for SYNTBOT when failed
