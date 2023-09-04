@@ -4,7 +4,7 @@
   become: yes
   tasks:
    - name: import sub playbook
-     include_tasks: linux_is_alive_test.yml
+     include_tasks: linux_is_alive_modified.yml
      vars:
          HOSTS: "{{ HOSTS }}"
      
