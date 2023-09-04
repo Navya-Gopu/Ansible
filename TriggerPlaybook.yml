@@ -7,7 +7,7 @@
     # include_tasks: linux_is_alive_modified.yml
      import_playbook: linux_is_alive_test.yml
      #vars:
-     internal_var:
+      internal_var:
        HOSTS: "{{ HOSTS }}"
      
  
