@@ -4,7 +4,7 @@
   become: yes
   tasks:
    - name: import sub playbook
-     ansible.builtin.import_playbook: otherplays.yml
+     include_tasks: linux_is_alive_test.yml
      vars:
          HOSTS: "{{ HOSTS }}"
      
