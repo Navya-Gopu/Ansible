@@ -2,14 +2,14 @@
 - name: Check if host exists in tower inventory
   set_fact:
    get_info: "{{ HOSTS }}"
-  tasks:
-    - block:
+ 
+  block:
       - name: "Fail if Extra Variable {{ get_info }} does not exist in Ansible Tower's inventory"
         fail:
           msg: "{{ item }} does not exist in Ansible Tower's inventory."
         when: "item not in groups['all']" 
         with_items: "{{ get_info }}"
-      rescue:
+  rescue:
       - name: Failure to get host in tower inventory
         debug:
           msg: "SYNTBOT_OUTPUT: FAILED:  Task to Check if hosts exists in tower  failed on {{ get_info }}: Failed to find hosts in Ansible tower inventory "
@@ -22,8 +22,8 @@
   gather_facts: false
   vars:
     - HOSTS:
-  tasks:
-    - block:
+ 
+  block:
       - name: "Check if host is available on port SSH (22)"
         wait_for:
           host: "{{ inventory_hostname }}"
@@ -58,7 +58,7 @@
 
  
 
-      rescue:
+  rescue:
       - name: Log output for SYNTBOT
         debug:
           msg:
