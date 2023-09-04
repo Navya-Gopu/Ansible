@@ -1,35 +1,28 @@
 ---
 - name: Check if host exists in tower inventory
-  
- 
+  gather_facts: false
+  # hosts: localhost
+
   block:
-      - name: " 1 "
-        set_fact:
-         get_info: "{{ HOSTS }}"
-      - name: "Fail if Extra Variable {{ get_info }} does not exist in Ansible Tower's inventory"
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
         fail:
           msg: "{{ item }} does not exist in Ansible Tower's inventory."
         when: "item not in groups['all']" 
-        with_items: "{{ get_info }}"
+        with_items: "{{HOSTS}}"
   rescue:
-      - name: " 2 "
-        set_fact:
-         get_info: "{{ HOSTS }}"
       - name: Failure to get host in tower inventory
         debug:
-          msg: "SYNTBOT_OUTPUT: FAILED:  Task to Check if hosts exists in tower  failed on {{ get_info }}: Failed to find hosts in Ansible tower inventory "
+          msg: "SYNTBOT_OUTPUT: FAILED:  Task to Check if hosts exists in tower  failed on {{ HOSTS }}: Failed to find hosts in Ansible tower inventory "
         failed_when: True
 
  
 
 - name: Playbook Linux ping fail
-  set_fact:
-        get_info: "{{ HOSTS }}"
-  hosts: "{{ get_info }}"
+  hosts: "{{ HOSTS }}"
   gather_facts: false
   vars:
     - HOSTS:
- 
+  
   block:
       - name: "Check if host is available on port SSH (22)"
         wait_for:
@@ -59,7 +52,7 @@
 #      - name: Log output for SYNTBOT
 #        debug:
 #          msg:
-#            - "SYNTBOT_OUTPUT: SUCCESSFUL: {{ get_info }} is up "
+#            - "SYNTBOT_OUTPUT: SUCCESSFUL: {{ HOSTS }} is up "
 #            - "SYNTBOT_DISPLAY: {{ facter_uptime_days }} day(s) / {{ facter_uptime_hours }} hour(s) of uptime"
 #        when: facter_uptime_days is defined
 
