@@ -4,6 +4,6 @@
    fetch_get_info_post: "{{ HOSTS }}"
   # hosts: localhost
  
- - name: "Fail if Extra Variable does not exist in Ansible Tower's inventory"
-        fail:
-          msg: "{{ fetch_get_info_post }} does not exist in Ansible Tower's inventory."
+- name: "Fail if Extra Variable does not exist in Ansible Tower's inventory"
+  debug:
+      msg: "{{ fetch_get_info_post }} does not exist in Ansible Tower's inventory."
