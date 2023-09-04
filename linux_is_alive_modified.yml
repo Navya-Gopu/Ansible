@@ -5,7 +5,7 @@
   block:
       - name: " 1 "
         set_fact:
-        get_info: "{{ HOSTS }}"
+         get_info: "{{ HOSTS }}"
       - name: "Fail if Extra Variable {{ get_info }} does not exist in Ansible Tower's inventory"
         fail:
           msg: "{{ item }} does not exist in Ansible Tower's inventory."
@@ -14,7 +14,7 @@
   rescue:
       - name: " 2 "
         set_fact:
-        get_info: "{{ HOSTS }}"
+         get_info: "{{ HOSTS }}"
       - name: Failure to get host in tower inventory
         debug:
           msg: "SYNTBOT_OUTPUT: FAILED:  Task to Check if hosts exists in tower  failed on {{ get_info }}: Failed to find hosts in Ansible tower inventory "
