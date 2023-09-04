@@ -1,6 +1,6 @@
 ---
 - name: Master playbook
-  hosts: localhost
+  hosts: "{{ HOSTS }}"
   become: yes
   tasks:
    - name: import sub playbook
