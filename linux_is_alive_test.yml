@@ -1,9 +1,9 @@
 ---
 - name: Check if host exists in tower inventory
   set_fact:
-   fetch_get_info_post: "{{ HOSTS }}"
+   get_info: "{{ HOSTS }}"
   # hosts: localhost
  
 - name: "Fail if Extra Variable does not exist in Ansible Tower's inventory"
   debug:
-      msg: "{{ fetch_get_info_post }} does not exist in Ansible Tower's inventory."
+      msg: "{{ get_info }} does not exist in Ansible Tower's inventory."
