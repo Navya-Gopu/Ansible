@@ -1,15 +1,20 @@
 ---
 - name: Check if host exists in tower inventory
-  set_fact:
-   get_info: "{{ HOSTS }}"
+  
  
   block:
+      - name: " 1 "
+        set_fact:
+        get_info: "{{ HOSTS }}"
       - name: "Fail if Extra Variable {{ get_info }} does not exist in Ansible Tower's inventory"
         fail:
           msg: "{{ item }} does not exist in Ansible Tower's inventory."
         when: "item not in groups['all']" 
         with_items: "{{ get_info }}"
   rescue:
+      - name: " 2 "
+        set_fact:
+        get_info: "{{ HOSTS }}"
       - name: Failure to get host in tower inventory
         debug:
           msg: "SYNTBOT_OUTPUT: FAILED:  Task to Check if hosts exists in tower  failed on {{ get_info }}: Failed to find hosts in Ansible tower inventory "
@@ -18,6 +23,8 @@
  
 
 - name: Playbook Linux ping fail
+  set_fact:
+        get_info: "{{ HOSTS }}"
   hosts: "{{ get_info }}"
   gather_facts: false
   vars:
