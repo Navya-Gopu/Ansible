@@ -6,7 +6,7 @@
    - name: import sub playbook
      include_tasks: linux_is_alive_test.yml
      vars:
-       HOSTS: "15.206.82.173"
+       HOSTS: "43.205.214.65"
      
  
      
