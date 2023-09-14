@@ -1,0 +1,58 @@
+---
+# Windows OS - Check Sum size of all disks and compare to SIZEGB (default 1TB) - if less OK else Fails
+- name: Check if host exists in tower inventory
+  gather_facts: false
+  hosts: localhost
+  vars:
+    HOSTS:
+
+  tasks:
+    - block:
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
+        fail:
+          msg: "{{ item }} does not exist in Ansible Tower's inventory."
+        when: "item not in groups['all']"
+        with_items: "{{HOSTS}}"
+
+      rescue:
+      - name: Failure to get host in tower inventory
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT: FAILED :  This target host {{ HOSTS }} does not exist in Tower Ansible Inventory 2L22"
+            - "SYNTBOT_DISPLAY: "
+        failed_when: True
+
+- name: Playbook Disks Sum Checker
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    HOSTS:
+    MAXSIZEGB:
+    
+
+  tasks:
+    - block:
+      - name: Copy ./files/os-disks-sum.ps1 to "{{ HOSTS }}"
+        win_copy:
+          src: ./files/os-disks-sum.ps1
+          dest: C:/Temp/os-disks-sum.ps1
+        register: result_copy
+    
+      - name: Execute Os disks Sum Check "{{ MAXSIZEGB }}"
+        win_command: powershell.exe -ExecutionPolicy ByPass -File C:/Temp/os-disks-sum.ps1 "{{ MAXSIZEGB }}"
+        register: CheckResult
+        changed_when: false
+
+          
+      - name: Log output for SYNTBOT when successful
+        debug:
+          msg: 
+            - "SYNTBOT_OUTPUT: SUCCESSFUL: OS DISKS SUM CHECK - {{ CheckResult.stdout | replace('\r','')|replace('\n','') | trim }}"
+       
+      rescue:
+        - name: Log output for SYNTBOT FAILED
+          debug:
+            msg:
+              - "SYNTBOT_OUTPUT: FAILED : Task {{ ansible_failed_task.name }} failed on {{ HOSTS }} - rc {{ ansible_failed_result.rc }}"
+              - "SYNTBOT_DISPLAY: OS DISKS SUM CHECK FAILED. {{ CheckResult.stdout | replace('\r','')|replace('\n','') | trim }}"
+          failed_when: true
