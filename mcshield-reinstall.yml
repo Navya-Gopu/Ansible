@@ -1,0 +1,193 @@
+---
+- name: Check if host exists in tower inventory
+  gather_facts: false
+  hosts: localhost
+  vars:
+    HOSTS:
+
+  tasks:
+    - block:
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
+        fail:
+          msg: "{{ item }} does not exist in Ansible Tower's inventory."
+        when: "item not in groups['all']"
+        with_items: "{{HOSTS}}"
+
+      rescue:
+      - name: Failure to get host in tower inventory
+        debug:
+          msg: "SYNTBOT_OUTPUT: FAILED :  This target host {{HOSTS}} does not  exist in tower Ansible Inventory 2L22"
+        failed_when: True
+
+# McShield presence is mandatory
+- name: "McShield Service presence check"
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    PROCESS: mcshield
+    SERVICE1: McAfeeFramework
+  tasks:
+    - block:
+      - name: "Check Service"
+        win_shell:
+          Get-Service "{{ SERVICE1 }}"
+        when: (SERVICE1 is defined) and (SERVICE1|length > 0)
+        changed_when: false
+
+      rescue:
+      - name: "{{ SERVICE1 }} service check FAILURE"
+        debug:
+          msg:
+          - "SYNTBOT_OUTPUT: FAILED - Task {{ ansible_failed_task.name}} failed on {{ HOSTS }} : {{ ansible_failed_result.msg }}"
+          - "SYNTBOT_DISPLAY: FAILED - Unable to check {{ SERVICE1 }} McShield service - Further investigation needed"
+        failed_when: True
+
+# McShield Process check
+- name: McShield Process check
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    PROCESS: mcshield
+    SERVICE1: McAfeeFramework
+    SERVICE2: ""
+    SERVICE3: ""
+  tasks:
+    - block:
+      - name: McShield Process Check
+        win_wait_for_process:
+          process_name_exact: "{{ PROCESS }}"
+          state: present
+          timeout: 20
+          sleep: 5
+
+      - name: "{{ SERVICE1 }} McShield Service Check"
+        win_service:
+          name: "{{ SERVICE1 }}"
+          state: started
+        when: (SERVICE1 is defined) and (SERVICE1|length > 0)
+        
+      - name: "{{ SERVICE2 }} McShield Service Check"
+        win_service:
+          name: "{{ SERVICE2 }}"
+          state: started
+        when: (SERVICE2 is defined) and (SERVICE2|length > 0)
+        
+      - name: "{{ SERVICE3 }} McShield Service Check"
+        win_service:
+          name: "{{ SERVICE3 }}"
+          state: started
+        when: (SERVICE3 is defined) and (SERVICE3|length > 0)
+
+      - name: Display Service started
+        debug:
+          msg: "SYNTBOT_OUTPUT: SUCCESSFUL : McShield successfully started"
+          
+      rescue:
+        - block:
+          - name: Process missing or Service not started
+            debug:
+              msg: "Process missing or Service not started"
+              
+          - name: "{{ SERVICE1 }} McShield Service Restart"
+            win_service:
+              name: "{{ SERVICE1 }}"
+              state: restarted
+            when: (SERVICE1 is defined) and (SERVICE1|length > 0)
+            
+          - name: "{{ SERVICE2 }} McShield Service Restart"
+            win_service:
+              name: "{{ SERVICE2 }}"
+              state: restarted
+            when: (SERVICE2 is defined) and (SERVICE2|length > 0)
+            
+          - name: "{{ SERVICE3 }} McShield Service Restart"
+            win_service:
+              name: "{{ SERVICE3 }}"
+              state: restarted
+            when: (SERVICE3 is defined) and (SERVICE3|length > 0)
+
+          - name: McShield Process Check
+            win_wait_for_process:
+              process_name_exact: "{{ PROCESS }}"
+              state: present
+              timeout: 20
+              sleep: 5
+        
+          - name: Display Service started
+            debug:
+              msg: "SYNTBOT_OUTPUT: SUCCESSFUL : McShield successfully started"
+ 
+          rescue:
+            - block:
+              - name: Unable to Restart Service
+                debug:
+                  msg: "SYNTBOT_OUTPUT : Service Restart Failed - McShield re-install needed"
+
+              - name: McShield Package Download from Artifactory 
+                win_get_url:
+                  url: https://artifactory.fr.eu.airbus.corp/1Y40/R-2L22_SyntBots_generic_L/windows/McAfee/FramePkg_5.6.2.exe
+                  headers:
+                    X-JFrog-Art-Api: AKCp5e3outMQBxeB6mg6E54ap2mnwnVSoKv4vGr7mjk1ZmazGBiY6N5gBhSyxZdsRv89rGYJ3
+                  dest: C:\Temp
+                  force: yes
+
+              - name: "Copy ./files/mcshield-reinstall.ps1 to {{ HOSTS }}"
+                win_copy:
+                  src: ./files/mcshield-reinstall.ps1
+                  dest: C:/Temp/mcshield-reinstall.ps1
+                register: result_copy
+
+              - name: "Execute Powershell C:/Temp/mcshield-reinstall.ps1"
+                win_command: powershell.exe -ExecutionPolicy ByPass -File C:/Temp/mcshield-reinstall.ps1
+                register: McShieldVersion
+                changed_when: false
+
+              - name: McShield Process Check
+                win_wait_for_process:
+                  process_name_exact: "{{ PROCESS }}"
+                  state: present
+                  timeout: 20
+                  sleep: 5
+
+              - name: "{{ SERVICE1 }} McShield Service final Check"
+                win_service:
+                  name: "{{ SERVICE1 }}"
+                  state: started
+                when: (SERVICE1 is defined) and (SERVICE1|length > 0)
+                
+              - name: "{{ SERVICE2 }} McShield Service final Check"
+                win_service:
+                  name: "{{ SERVICE2 }}"
+                  state: started
+                when: (SERVICE2 is defined) and (SERVICE2|length > 0)
+                
+              - name: "{{ SERVICE3 }} McShield Service final Check"
+                win_service:
+                  name: "{{ SERVICE3 }}"
+                  state: started
+                when: (SERVICE3 is defined) and (SERVICE3|length > 0)
+
+              - name: Display Service started
+                debug:
+                  msg:
+                    - "SYNTBOT_OUTPUT: SUCCESSFUL : McShield successfully re-installed and started"
+                    - "SYNTBOT_DISPLAY: SUCCESSFUL : McShield successfully re-installed and started. Ticket to Close Completed. Please Open a change to REBOOT {{ HOSTS }}"
+
+              rescue:
+                - name: McShield Re Install Failed
+                  debug:
+                    msg:
+                      - "SYNTBOT_OUTPUT: FAILED - Task {{ ansible_failed_task.name}} failed on {{ HOSTS }} : {{ ansible_failed_result.msg }}"
+                      - "SYNTBOT_DISPLAY: FAILED - Unable to re-install McShield - Further investigation needed"
+                  failed_when: True
+
+              always:
+                - name: remove utilities
+                  win_file:
+                    path: C:\Temp\mcshield-reinstall.ps1
+                    state: absent
+
+                - name: remove utilities
+                  win_file:
+                    path: C:\Temp\FramePkg_5.6.2.exe
+                    state: absent
