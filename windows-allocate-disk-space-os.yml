@@ -1,0 +1,116 @@
+---
+############################################################
+# DESCRIPTION: Windows disk partition space extend playbook
+#
+# USE: It requires the variables HOSTS (fully qualified name),
+#    DRIVE (Windows drive letter, i.e. c, d...),
+#
+# REQUIRES:  files\alloc-dpsace-v1.0.3.ps1 PowerShell script
+#
+# VERSION: 1.0.0, Juan Lopez, 30/04/2020
+# VERSION: 1.0.1, Frank Atikossi, 26/06/2020
+# ...
+#
+############################################################
+
+#-------------------------------------------------------------------------------
+- name: Check if host exists in tower inventory
+  gather_facts: false
+  hosts: localhost
+  vars:
+    HOSTS:
+
+  tasks:
+    - block:
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
+        fail:
+          msg: "{{ item }} does not exist in Ansible Tower's inventory."
+        when: "item not in groups['all']"
+        with_items: "{{HOSTS}}"
+
+      rescue:
+      - name: Failure to get host in tower inventory
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT: FAILED on {{ HOSTS }}"
+            - "SYNTBOT_DISPLAY: This target host {{ HOSTS }} does not exist in Tower Ansible Inventory"
+        failed_when: True
+ 
+#------------------------------------------------------------------------------- 
+- name: Playbook Windows disk space extend to the max free available
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    HOSTS:
+    DRIVE:
+    PS_SCRIPT: alloc-dspace-v1.0.3.ps1
+    DEST_FILE: C:/Temp/{{ PS_SCRIPT }}
+    PS_SCRIPT_EXIT_CODES:
+      - "|97|Issue to collect the drive letter to upgrade - drive letter not exist or is not a drive"
+      - "|98|Issue to collect the information, if local hard drive exist"
+      - "|99|Issue during the process to rescan the computer looking for disks and volumes"
+      - "|100|Partition Resize - Issue during resize process"
+      - "|101|Issue during the collect of volume information freespace before upgrade"
+      - "|102|Issue during the collect of volume information freespace after upgrade"
+      - "|103|Issue during upgrade - the drive letter has not been upgraded - no unallocated partition next to the partition to upgrade"
+      
+  tasks:
+    - block:
+      - name: Assert that input parameters are provided
+        assert:
+          that:
+            - DRIVE | mandatory
+            - DRIVE is defined
+          msg: "SYNTBOT_OUTPUT : FAILED on {{ HOSTS }} no drive specified."
+        
+      - name: Define dictionary of exit codes
+        set_fact:
+          EXIT_CODES_DICT: "{{ EXIT_CODES_DICT|default([]) +  [item] }}"
+        when: item.split('|') 
+        with_items:
+          - "{{ PS_SCRIPT_EXIT_CODES }}"
+          
+      - name: Copy ./files/{{ PS_SCRIPT }} to {{ HOSTS }}
+        win_copy:
+          src: ./files/{{ PS_SCRIPT }}
+          dest: "{{ DEST_FILE }}"
+
+      - name: Execute Powershell {{ DEST_FILE }}
+        win_command: powershell.exe -ExecutionPolicy ByPass -File "{{ DEST_FILE | quote }}" "{{ DRIVE | quote }}"
+        register: RESULT
+        changed_when: false
+              
+      - name: Log output for SYNTBOT when successful
+        debug:
+          msg:
+             - "SYNTBOT_OUTPUT: SUCCESSFUL on {{ HOSTS }}"
+             - "SYNTBOT_DISPLAY: Disk drive {{ DRIVE }} has been increased succesfully"
+       
+      rescue:
+        - name: Get the Powershell script return code
+          set_fact: 
+             ERROR_CODE: "{{ RESULT.rc }}"
+             
+        - name: Find the line for that specific return code in our dictionary of exit codes defined in this playbook
+          set_fact:
+             EXIT_CODE_DETAILS: "{{ item | default('Unexpected error code performing the disk extension') }}"
+          when: item|trim is search(ERROR_CODE)
+          with_items:
+             - "{{ EXIT_CODES_DICT }}"
+
+        - name: Get the error message corresponding to that error code looking at the second column of the line
+          set_fact:
+             ERROR_MESSAGE: "{{ EXIT_CODE_DETAILS.split('|')[2]|trim }}"
+            
+        - name: Log output for SYNTBOT FAILED
+          debug:
+            msg:
+              - "SYNTBOT_OUTPUT: FAILED on {{ HOSTS }}"
+              - "SYNTBOT_DISPLAY: Error {{ ERROR_CODE }} - {{ ERROR_MESSAGE }}"
+          failed_when: true
+
+      always:
+        - name: remove script file
+          win_file:
+            path: "{{ DEST_FILE }}"
+            state: absent
