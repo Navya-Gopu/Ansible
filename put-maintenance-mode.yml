@@ -1,0 +1,165 @@
+---
+- name: Playbook check if host exists in inventory
+  gather_facts: false
+  hosts: localhost
+  vars:
+    HOSTS: de0-vsmonr-p01.eu.airbus.corp
+
+  tasks:
+    - block:
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
+        fail:
+          msg: "{{ item }} does not exist in Ansible Tower's inventory."
+        when: "item not in groups['all']" 
+        with_items: "{{HOSTS}}"
+
+      rescue:
+      - name: Failure to get host in tower inventory
+        debug:
+          msg: "SYNTBOT_OUTPUT: FAILED: This target host {{ HOSTS }} does not exist in the Ansible Tower Inventory 2L22"
+        failed_when: True
+
+- name: Playbook check if target host  {{HOSTS}} is Windows
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    HOSTS: de0-vsmonr-p01.eu.airbus.corp
+
+  tasks:
+    - block:
+      - name: "Fail if Variable ansible_connection is not winrm "
+        assert:
+          that:
+            - ansible_connection == "winrm"
+          msg: "Playbook is for Windows not Linux"
+
+      rescue:
+      - name: Invalid OS for this playbook
+        debug:
+          msg: "SYNTBOT_OUTPUT: FAILED: {{ HOSTS }} is a Linux cannot run this playbook"
+        failed_when: True
+
+#--------------------------------------------------------------
+# Variables
+#- Define HOST : /H :HOSTNAME
+#- Define APPLICATION name: /A:APPLICATION
+#- Define Object name: /O:OBJECT
+#- Define Parameter name: /P:PARAMETER
+#- Define Maintenance name: /ID:MAINTENANCE_NAME
+#- Define Maintenance Description : /C:DESCRIPTION
+#- Define Requestor name: /L:LOGIN
+#- Define Begin Date: /B:DATE (Format : YYYMMDTHMS)
+#- Define Ended Date: /E:DATE (Format : YYYMMDTHMS)
+#- Define Sleep time: /TO:TIME (in milliseconds)
+#--------------------------------------------------------------
+- name: Playbook Put Maintenance Mode SERVER / APPLICATION or DATABASE
+  gather_facts: false
+  hosts: "{{ HOSTS }}"
+  vars:
+    HOSTS: de0-vsmonr-p01.eu.airbus.corp
+    TYPE_T: 
+    TARGET_HOST_H: 
+    APPLICATION_NAME_A:
+    OBJECT_NAME_O:
+    PARAMETER_NAME_P:
+    MAINTENANCE_NAME_ID:
+    MAINTENANCE_DESCRIPTION_C:
+    REQUESTOR_NAME_L:
+    BEGIN_DATE_B:
+    END_DATE_E:
+    SLEEP_TIME_TO:
+
+
+  tasks:
+    - block:
+
+      - name: Check that TYPE_T is provided and must be SERVER or APPLICATION or DATABASE
+        assert:
+          that:
+            - TYPE_T | mandatory
+            - TYPE_T is defined
+            - MAINTENANCE_NAME_ID | mandatory
+            - MAINTENANCE_NAME_ID is defined
+            - TYPE_T == "SERVER" or TYPE_T == "APPLICATION" or TYPE_T == "DATABASE"
+          msg: "Please provide TYPE_T variable and it must be SERVER or APPLICATION or DATABASE"
+
+      - name: Check that BEGIN_DATE_B and END_DATE_E are provided
+        assert:
+          that:
+            - BEGIN_DATE_B | mandatory
+            - END_DATE_E | mandatory
+            - BEGIN_DATE_B is defined
+            - END_DATE_E is defined
+          msg: "Please provide BEGIN_DATE_B or END_DATE_E variable"
+
+      - name: Check that TARGET_HOST_H is provided when TYPE_T is {{TYPE_T}}
+        assert:
+          that:
+            - TARGET_HOST_H | mandatory
+            - TARGET_HOST_H is defined
+          msg: "Please provide variable TARGET_HOST_H"
+        when: TYPE_T == "SERVER"
+
+      - name: Check that TARGET_HOST_H and OBJECT_NAME_O are provided when TYPE_T is {{TYPE_T}}
+        assert:
+          that:
+            - TARGET_HOST_H | mandatory
+            - OBJECT_NAME_O | mandatory
+            - TARGET_HOST_H is defined and OBJECT_NAME_O is defined
+          msg: "Please provide variable TARGET_HOST_H and OBJECT_NAME_O"
+        when: TYPE_T == "DATABASE"
+
+      - name: Check that APPLICATION_NAME_A is provided when TYPE_T is {{TYPE_T}}
+        assert:
+          that:
+            - APPLICATION_NAME_A | mandatory
+            - APPLICATION_NAME_A is defined
+          msg: "Please provide variable APPLICATION_NAME_A"
+        when: TYPE_T == "APPLICATION"
+
+      - name: Put Maintenance Mode SERVER 
+        win_command: 'D:/Airbus/Production/bin/bem.manage_maintenance.cmd /ID:{{MAINTENANCE_NAME_ID}} /M:ON /T:SERVER /H:{{TARGET_HOST_H}} /L:"{{REQUESTOR_NAME_L}}" /C:"{{MAINTENANCE_DESCRIPTION_C}}" /B:"{{BEGIN_DATE_B}}" /E:"{{END_DATE_E}}"'
+        register: result
+        when: TYPE_T == "SERVER"
+
+
+      - name: Put Maintenance Mode APPLICATION 
+        win_command: 'D:/Airbus/Production/bin/bem.manage_maintenance.cmd /ID:"{{MAINTENANCE_NAME_ID}}" /M:ON /T:APPLICATION /A:"{{APPLICATION_NAME_A}}" /L:"{{REQUESTOR_NAME_L}}" /C:"{{MAINTENANCE_DESCRIPTION_C}}" /B:"{{BEGIN_DATE_B}}" /E:"{{END_DATE_E}}"'
+        register: result
+        when: TYPE_T == "APPLICATION"
+
+      - name: Put Maintenance Mode DATABASE 
+        win_command: 'D:/Airbus/Production/bin/bem.manage_maintenance.cmd /ID:{{MAINTENANCE_NAME_ID}} /M:ON /T:DATABASE /H:{{TARGET_HOST_H}} /O:{{OBJECT_NAME_O}} /L:"{{REQUESTOR_NAME_L}}" /C:"{{MAINTENANCE_DESCRIPTION_C}}" /B:"{{BEGIN_DATE_B}}" /E:"{{END_DATE_E}}"'
+        register: result
+        when: TYPE_T == "DATABASE"
+
+      - name: Debug
+        debug:
+          var: result
+
+      - name: Log output for SYNTBOT OK Maintenance Mode SERVER
+        debug:
+          msg: 
+           - "SYNTBOT_OUTPUT: SUCCESSFUL: Put Maintenance Mode SERVER on /H:{{TARGET_HOST_H}} /ID:{{MAINTENANCE_NAME_ID}} /C:{{MAINTENANCE_DESCRIPTION_C}} /L:{{REQUESTOR_NAME_L}} /B:{{BEGIN_DATE_B}} /E:{{END_DATE_E}}"
+        when: TYPE_T == "SERVER"
+
+      - name: Log output for SYNTBOT OK Maintenance Mode APPLICATION
+        debug:
+          msg: 
+           - "SYNTBOT_OUTPUT: SUCCESSFUL: Put Maintenance Mode APPLICATION Maintenance ID={{MAINTENANCE_NAME_ID}}"
+        when: TYPE_T == "APPLICATION"
+
+      - name: Log output for SYNTBOT OK Maintenance Mode DATABASE
+        debug:
+          msg: 
+           - "SYNTBOT_OUTPUT: SUCCESSFUL: Put Maintenance Mode DATABASE on /O:{{OBJECT_NAME_O}} /H:{{TARGET_HOST_H}} /ID:{{MAINTENANCE_NAME_ID}} /C:{{MAINTENANCE_DESCRIPTION_C}} /L:{{REQUESTOR_NAME_L}} /B:{{BEGIN_DATE_B}} /E:{{END_DATE_E}}"
+        when: TYPE_T == "DATABASE"
+
+      rescue:
+
+      - name: Log output for SYNTBOT FAILED
+        debug:
+          msg: 
+           - "SYNTBOT_OUTPUT: FAILED: Task {{ ansible_failed_task.name}} failed on {{ HOSTS }} : {{ ansible_failed_result.msg }}"
+        failed_when: true 
+#-----------------------------------------------------------------------------------------
