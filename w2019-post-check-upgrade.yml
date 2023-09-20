@@ -1,0 +1,119 @@
+---
+- name: Check if host exists in tower inventory
+  gather_facts: false
+  hosts: localhost
+  tasks:
+    - block:
+      - name: "Fail if Extra Variable {{ HOSTS }} does not exist in Ansible Tower's inventory"
+        fail:
+          msg: "{{ item }} does not exist in Ansible Tower's inventory."
+        when: "item not in groups['all']" 
+        with_items: "{{HOSTS|lower}}"
+      rescue:
+      - name: Failure to get host in tower inventory
+        debug:
+          msg: "SYNTBOT_OUTPUT : FAILED : Failed to find host ({{HOSTS|lower}}) in Ansible tower inventory 2L22"
+        failed_when: True
+#---------------------------------------------------------------------------------
+- name: Playbook Windows W2019 check post upgrade
+  hosts: "{{ HOSTS|lower }}"
+  gather_facts: false
+  vars:
+    - HOSTS:
+
+  tasks:
+    - block:
+
+      - name: Force hostname to lower case
+        set_fact:
+          HOSTS: "{{HOSTS|lower}}"
+
+      - name: Check if host {{HOSTS}} winrm available
+        wait_for:
+          host: '{{HOSTS}}'
+          port: 5985
+          connect_timeout: 2
+          timeout: 2
+        delegate_to: localhost
+
+      - name: Gathering facts on {{HOSTS}}
+        delegate_to: "{{HOSTS}}"
+        run_once: true
+        setup:
+
+      - name: Display os type and os level
+        debug:
+          msg: 'OS type: {{ansible_distribution}}  Level: {{ansible_distribution_major_version}}'
+
+      - name: Check OS version Windows 2019
+        assert:
+          that:
+            - "{{'2019' in ansible_distribution}}"
+
+      - name: Delete file C:\~LOGS\MyWM\CompareServices\NotStartedAutoServices_Comma.csv if exists
+        win_file:
+          path: "{{ item }}"
+          state:  absent
+        with_items:
+          - C:\~LOGS\MyWM\CompareServices\NotStartedAutoServices_Comma.csv
+
+      - name: "Check if script D:/_MigSRC/Scripts/CompareServices/CompareServices.cmd exists"
+        win_stat:
+          path: D:\_MigSRC\Scripts\CompareServices\CompareServices.cmd
+        register: script_compare
+
+      - name: Execute CompareServices.cmd on {{HOSTS}}
+        win_command: D:\_MigSRC\Scripts\CompareServices\CompareServices.cmd 
+        register: result_compare
+        when: script_compare.stat.exists == true
+        ignore_errors: yes
+
+      - name: Check if file NotStartedAutoServices_Comma.csv is created
+        win_stat:
+          path: C:\~LOGS\MyWM\CompareServices\NotStartedAutoServices_Comma.csv
+        register: file
+
+      - name: Copy script list-services-auto-not-started.ps1
+        win_copy: 
+          src: "{{item}}"
+          dest: D:\Temp\Migration\
+        with_items:
+          - files/list-services-auto-not-started.ps1
+        when: file.stat.exists == True
+
+      - name: "Display content of the file C:/~LOGS/MyWM/CompareServices/NotStartedAutoServices_Comma.csv"
+        win_shell: 'D:/Temp/Migration/list-services-auto-not-started.ps1'
+        register: file_content
+        when: file.stat.exists == True
+
+      - name: Log output for SYNTBOT when OK with content of file
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT : SUCCESSFUL upgrade to Windows 2019 on {{HOSTS}}"
+            - "SYNTBOT_DISPLAY : Last reboot {{ansible_lastboot}} {{ansible_distribution}} Level: {{ansible_distribution_major_version}}"
+            - "{{file_content.stdout_lines|to_nice_yaml}}"
+        when: file.stat.exists == True
+
+      - name: Log output for SYNTBOT when OK compare are identical
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT : SUCCESSFUL upgrade to Windows 2019 on {{HOSTS}}"
+            - "SYNTBOT_DISPLAY : Last reboot {{ansible_lastboot}} {{ansible_distribution}} Level: {{ansible_distribution_major_version}}"
+            - "All running services are identicals (before and after migration)"
+        when: file.stat.exists == False
+
+      rescue:
+      - name: Log output for SYNTBOT when failed
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT : FAILED : Task {{ansible_failed_task.name}} failed {{ansible_failed_result.msg }} ({{ansible_host}} is running {{ansible_distribution}})"
+        when: ansible_distribution is defined
+        failed_when: True
+
+      - name: Log output for SYNTBOT when failed
+        debug:
+          msg:
+            - "SYNTBOT_OUTPUT : FAILED : Task {{ansible_failed_task.name}} failed {{ansible_failed_result.msg }} ({{ansible_host}} )"
+        when: ansible_distribution is not defined
+        failed_when: True
+#----------------------------------------------------------------------------------------
