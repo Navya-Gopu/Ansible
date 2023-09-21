@@ -133,7 +133,7 @@
 
               - name: "Copy ./files/mcshield-reinstall.ps1 to {{ HOSTS }}"
                 win_copy:
-                  src: ./files/mcshield-reinstall.ps1
+                  src: ./mcshield-reinstall.ps1
                   dest: C:/Temp/mcshield-reinstall.ps1
                 register: result_copy
 
