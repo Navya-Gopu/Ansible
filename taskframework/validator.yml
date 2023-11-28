@@ -1,0 +1,298 @@
+---
+- name: Fetch Incident and Update Incident fields data from ServiceNow
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    #file_path: "inputValidationUsecasePayload1.txt"
+    ticketType: "e2e"
+    incident_data_validator: "{{ incident_data_validator }}"
+    ci_name: "16.171.64.170"  # harcoding ci_name , change it later 
+    # incident_validator_data: "{{ incident_data_validator }} "
+    user_sys_id: "4583e347b4672110320f8dc279c804bb"
+    pat_token: "{{ pat_token }}"
+    #servicenow_instance: "https://dev141143.service-now.com"
+    servicenow_instance: "{{ servicenow_instance }}"
+
+    
+
+  tasks:
+    - block:
+
+      - name: Display the incident data received from poller
+        debug:
+          var:  incident_data_validator
+
+      - name: Extract incident_sys_id without list
+        set_fact:
+          mod_sys_id: "{{ incident_data_validator['sys_id'] }}"
+
+
+      - name: Extract Incident-number using json_query
+        set_fact:        
+          incident_number: "{{ incident_data_validator['Incident-number'] }}"
+      
+      - name: Display the Incident-number
+        debug:
+          var: incident_number
+
+      - name: Extract description using json_query
+        set_fact:        
+          description: "{{ incident_data_validator['description'] }}"
+          short_description: "{{ incident_data_validator['short_description'] }}"       
+
+
+
+      # - name: Extract Impacted CI 
+      #   set_fact:
+      #    impacted_ci_List: "{{ incident_data_validator.incident | json_query('impactedCi') }}"
+        
+
+     
+
+
+      - name: Get The cmdb details 
+        include_tasks: mysql_query_playbook-Harsh.yml
+        #loop: "{{ impacted_ci_List }}"
+        #loop_control:
+          #loop_var: impacted_ci
+        vars:  
+          query: "SELECT ci_name , credId FROM incidentdata.ci_details ci INNER JOIN incidentdata.`credId-details` cr ON ci.os = cr.os and ci.dns_domain = cr.`prod-EU-Domain` and ci.credType = cr.credType  where ci_name = '{{ ci_name }}';"
+        register: query_result
+        
+      - name: Display the query_result
+        debug:
+          var: query_result
+
+
+      - name: Extract CredId and ci-name values from query_output
+        set_fact:
+          credId: "{{ query_result.query_result[0] | map(attribute='credId') | first | string }}"
+          ciName: "{{ query_result.query_result[0] | map(attribute='ci_name') | first | string }}" 
+
+      - name: Display the credId
+        debug:
+          var: credId
+        
+
+      - name: Get the tickettypes
+        include_tasks: mysql_query_playbook-Harsh.yml
+        vars:  
+          query: "select alertType from template_details where ticketType='{{ ticketType }}' ;"
+        register: query_result
+
+      - name: Extract alertType values from query_result
+        set_fact:
+          alert_types: "{{ query_result.query_result[0] | map(attribute='alertType') | list }}"
+
+      - name: Display all the alert Types
+        debug:
+          var: alert_types
+
+      #- name: Display the file data
+        #debug:
+          #var: alert_result.query_result[0][0].alertType
+
+      - name: Loop through alert types and check for a match in JSON data
+        set_fact:
+          alert_type_matched: "{{ alert_type_matched | default([]) + [item] }}"
+        loop: "{{ alert_types }}"
+        loop_control:
+          loop_var: item
+        when: "item in incident_data_validator.short_description or item in incident_data_validator.description"  # adding or instead of and
+      
+    
+      - name: Display the alert Output
+        debug:
+          var: alert_type_matched
+
+      - name: Loop through the alert_type_matched
+        include_tasks: mysql_query_playbook-Harsh.yml
+        vars:  
+          query: "select tempId from template_details where alertType = '{{ alert_type_matched[0] }}' ;"
+        register: query_result
+
+      - name: Extract tempId values from query_result
+        set_fact:
+          tempId: "{{ query_result.query_result[0] | map(attribute='tempId') }}"
+
+      - name: Display tempId
+        debug:
+          var: tempId
+
+      # - name: Extract tempId without list brackets
+      #   set_fact:
+      #     tempIdFilter: "{{ tempId | replace('[', '') | replace(']', '') }}"
+
+      - name: Extract tempId without list
+        set_fact:
+          tempIdFilter: "{{ tempId | first |string }}"
+          
+
+  ####### Update the Incident #####
+
+  
+
+      - name: Update assigned_to and incident_state fields in ServiceNow Incident
+        uri:
+          url: "{{ servicenow_instance }}/api/now/table/incident/{{ mod_sys_id }}"
+          method: PATCH
+          body_format: json
+          headers:
+            Accept: "application/json"
+            #Authorization: "Basic {{ encoded_credentials | string }}"
+            Authorization: "Bearer {{ pat_token }}"
+          return_content: yes
+          force_basic_auth: yes
+          body:
+            "incident_state" : "2"
+            "assigned_to" : "{{ user_sys_id }}"
+        register: result
+
+      - name: Api response after assigning the ticket to user name 
+        debug:
+          var: result
+
+      - name: Print the updated API responses
+        debug:
+          msg: "Updated incident state: {{ result.json.result.incident_state }} and updated_assigned_to: {{ result.json.result.assigned_to }}"
+    
+
+
+
+      - name: Display tempId filter
+        debug:
+          var: tempIdFilter
+
+
+  ## calling end template by passing credId , tempId, ci-name , description , short-description
+
+      - name: Launch AAP Job Template
+        awx.awx.job_launch:
+          tower_host: "{{ var_tower_hostname }}"
+          tower_username: "{{ var_tower_username }}"
+          tower_password: "{{ var_tower_password }}"
+          validate_certs: False  # Set to True if you want to validate SSL certificates
+          job_template: "{{ tempIdFilter }}"
+          credentials:
+            - "{{ credId }}"
+          extra_vars:
+            HOSTS: "{{ ciName }}"
+            DESCRIPTION: "{{ description }}"
+        register: job_launch_result
+      
+      
+      - name: Wait for Job Completion
+        awx.awx.job_wait:
+          tower_host: "{{ var_tower_hostname }}"
+          tower_username: "{{ var_tower_username }}"
+          tower_password: "{{ var_tower_password }}"
+          validate_certs: False  # Set to True if you want to validate SSL certificates
+          job_id: "{{ job_launch_result.id }}"
+        register: job_wait_result
+      
+      
+      - name: Display Job Details
+        debug:
+          var: job_wait_result
+
+      - name: Get job Id from job_wait_result
+        set_fact:
+          job_id: "{{ job_wait_result.id  }}"
+
+      - name: print job id 
+        debug:
+          var: job_id
+
+      - name: Get job output
+        ansible.builtin.uri:
+          url: "https://{{ var_tower_hostname }}/api/v2/jobs/{{ job_id }}/stdout/?format=txt"
+          validate_certs: no
+          method: GET
+          user: "{{ var_tower_username }}"
+          password: "{{ var_tower_password }}"
+          force_basic_auth: yes
+          return_content: yes
+        register: api_response
+  
+      - name: print response
+        debug:
+          var: api_response
+  
+  
+      - name: Extract output msg
+        set_fact:
+          extracted_output: "{{ api_response.content | regex_search('OUTPUT: (.+?)\"') | default('') | regex_replace('\"$', '') }}"
+
+          
+
+      # - name: Create Resolution Payload
+      #   set_fact:
+      #     resolution_payload:            
+      #       incident_state: "6"
+      #       close_code: "Resolved by request"
+      #       close_notes: "Automation successfully resolved"
+      #       assigned_to: ""
+
+
+
+      - name: Update assigned_to and incident_state fields in ServiceNow Incident when end template success , resolved the ticket 
+        uri:
+          url: "{{ servicenow_instance }}/api/now/table/incident/{{ mod_sys_id }}"
+          method: PATCH
+          body_format: json
+          headers:
+            Accept: "application/json"
+            #Authorization: "Basic {{ encoded_credentials | string }}"
+            Authorization: "Bearer {{ pat_token }}"
+          return_content: yes
+          force_basic_auth: yes
+          body:
+            incident_state: "6"
+            close_code: "Resolved by request"
+            close_notes: "Automation successfully resolved"
+            work_notes: "{{ extracted_output }}"
+            assigned_to: "{{ user_sys_id }}"
+        when: job_wait_result.status == "successful"  # resolve ticket in job state is successful
+
+      
+
+
+      rescue:
+          # - name: Log Output For Failure
+          #   debug:
+          #     msg: "Log : FAILED : Task {{ ansible_failed_task.name }} Failed and the ERROR: {{ ansible_failed_result }}"
+          #   failed_when: True
+
+          - name: set fact ansible_failed_result
+            set_fact:
+              ansible_fail_result: "{{ ansible_failed_result.msg  }}"
+
+          - name: print ansible_fail
+            debug:
+              var: ansible_fail_result 
+
+          - name: call logging playbook 
+            include_tasks: logging.yml
+            vars:
+              ansible_failed_results: "{{ ansible_fail_result  }}"
+
+
+          - name: Update assigned_to and incident_state fields in ServiceNow Incident when end template fail , deassign the ticket 
+            uri:
+              url: "{{ servicenow_instance }}/api/now/table/incident/{{ mod_sys_id }}"
+              method: PATCH
+              body_format: json
+              headers:
+                Accept: "application/json"
+                #Authorization: "Basic {{ encoded_credentials | string }}"
+                Authorization: "Bearer {{ pat_token }}"
+              return_content: yes
+              force_basic_auth: yes
+              body:
+                incident_state : "3"
+                assigned_to : ""
+                close_code: "User error"
+                close_notes: "{{ ansible_fail_result }}"
+                work_notes: "{{ ansible_fail_result }}"
+            #register: result
+            #when: job_wait_result.status == "failed"  # deassign ticket in job state is failed
